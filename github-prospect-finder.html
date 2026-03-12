@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GitHub Prospect Finder</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d1117; --surface: #161b22; --surface2: #1c2128;
+      --border: #30363d; --text: #e6edf3; --muted: #7d8590;
+      --accent: #2f81f7; --green: #3fb950; --yellow: #d29922;
+      --red: #f85149; --purple: #bc8cff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header { border-bottom: 1px solid var(--border); padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { width: 34px; height: 34px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-text { font-size: 17px; font-weight: 800; }
+    .logo-text span { color: var(--accent); }
+    .header-tag { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); background: var(--surface); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; }
+
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px; }
+
+    .intro { text-align: center; margin-bottom: 28px; }
+    .intro h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+    .intro p { color: var(--muted); font-size: 14px; max-width: 560px; margin: 0 auto; line-height: 1.6; }
+
+    .info-banner { background: rgba(47,129,247,0.07); border: 1px solid rgba(47,129,247,0.2); border-radius: 10px; padding: 14px 20px; margin-bottom: 28px; display: flex; gap: 10px; }
+    .info-banner p { font-size: 13px; color: #93b4d4; line-height: 1.6; }
+    .info-banner p strong { color: var(--text); }
+
+    /* Search builder */
+    .search-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 28px; }
+    .panel-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+    .filters { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+    label { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    select, input[type=number] { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 9px 12px; border-radius: 8px; font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: border 0.15s; }
+    select:focus, input:focus { border-color: var(--accent); }
+    .search-btn { width: 100%; padding: 13px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .search-btn:hover { background: #388bfd; }
+
+    /* Result box */
+    .result-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 28px; display: none; }
+    .result-box h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--green); }
+    .result-links { display: flex; flex-direction: column; gap: 8px; }
+    .result-link { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; text-decoration: none; color: var(--text); font-size: 13px; transition: border-color 0.15s; gap: 12px; }
+    .result-link:hover { border-color: var(--accent); }
+    .rl-label { font-weight: 600; font-size: 13px; flex: 1; }
+    .rl-arrow { color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+    /* Strategies */
+    .section-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .strategies { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .strategy-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .strategy-header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .strategy-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .sbadge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; white-space: nowrap; flex-shrink: 0; }
+    .sbadge.hot  { background: rgba(248,81,73,0.15);  color: var(--red);    border: 1px solid rgba(248,81,73,0.3); }
+    .sbadge.warm { background: rgba(210,153,34,0.15); color: var(--yellow); border: 1px solid rgba(210,153,34,0.3); }
+    .sbadge.good { background: rgba(63,185,80,0.15);  color: var(--green);  border: 1px solid rgba(63,185,80,0.3); }
+    .sinfo h4 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .sinfo p  { font-size: 12px; color: var(--muted); }
+    .open-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; background: var(--accent); color: #fff; border-radius: 7px; font-size: 13px; font-weight: 700; text-decoration: none; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+    .open-btn:hover { background: #388bfd; }
+    .strategy-tip { padding: 10px 20px 14px; border-top: 1px solid var(--border); background: var(--surface2); }
+    .strategy-tip p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .strategy-tip p strong { color: var(--text); }
+
+    /* Outreach */
+    .outreach-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 28px; }
+    .outreach-panel h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .outreach-panel > p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+    .msg-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .msg-tab { padding: 7px 16px; font-size: 13px; font-weight: 600; border-radius: 7px; border: 1px solid var(--border); color: var(--muted); cursor: pointer; background: none; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; }
+    .msg-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; line-height: 1.7; resize: vertical; min-height: 210px; outline: none; }
+    textarea:focus { border-color: var(--accent); }
+    .copy-msg-btn { margin-top: 10px; padding: 10px 22px; background: var(--accent); color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.15s; }
+    .copy-msg-btn:hover { background: #388bfd; }
+
+    /* Checklist */
+    .checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .checklist h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .checklist > p { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+    .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .check-item:last-child { border-bottom: none; }
+    .check-item input[type=checkbox] { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; cursor: pointer; }
+    .check-item label { font-size: 13px; color: var(--muted); line-height: 1.5; cursor: pointer; }
+    .check-item label strong { color: var(--text); display: block; margin-bottom: 2px; font-size: 14px; }
+
+    @media (max-width: 700px) {
+      .filters { grid-template-columns: 1fr 1fr; }
+      .container { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🔍</div>
+    <div class="logo-text">GitHub <span>Prospect</span> Finder</div>
+  </div>
+  <span class="header-tag">For Technical Writers</span>
+</header>
+
+<div class="container">
+
+  <div class="intro">
+    <h1>Find Real Repos That Need Your Docs</h1>
+    <p>Every button opens a real live GitHub search — no fake data, no 404 errors. Browse actual repos, check their README, and reach out.</p>
+  </div>
+
+  <div class="info-banner">
+    <span>ℹ️</span>
+    <p><strong>How to use this tool:</strong> Click any "Open on GitHub" button → GitHub shows real repos → Open each one → Check the README quality using the checklist below → If it's bad, copy an outreach message and contact the owner.</p>
+  </div>
+
+  <!-- Custom Search Builder -->
+  <div class="search-panel">
+    <div class="panel-title">🎯 Build Your Own Search</div>
+    <div class="filters">
+      <div>
+        <label>Topic</label>
+        <select id="topic">
+          <option value="api">API / Backend</option>
+          <option value="saas">SaaS Tools</option>
+          <option value="developer-tools">Developer Tools</option>
+          <option value="cli">CLI Tools</option>
+          <option value="nodejs">Node.js</option>
+          <option value="python">Python</option>
+          <option value="database">Database / ORM</option>
+          <option value="authentication">Auth / Security</option>
+          <option value="react">React</option>
+          <option value="devops">DevOps</option>
+        </select>
+      </div>
+      <div>
+        <label>Min Stars</label>
+        <input type="number" id="minStars" value="30" min="1"/>
+      </div>
+      <div>
+        <label>Max Stars</label>
+        <input type="number" id="maxStars" value="500" min="1"/>
+      </div>
+      <div>
+        <label>Language</label>
+        <select id="language">
+          <option value="">Any</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="TypeScript">TypeScript</option>
+          <option value="Python">Python</option>
+          <option value="Go">Go</option>
+          <option value="Rust">Rust</option>
+          <option value="Java">Java</option>
+        </select>
+      </div>
+    </div>
+    <button class="search-btn" onclick="buildSearch()">🔍 Generate My Search Links</button>
+  </div>
+
+  <!-- Generated links appear here -->
+  <div class="result-box" id="resultBox">
+    <h3>✅ Your Custom Search Links — Click Any to Open Real GitHub Results</h3>
+    <div class="result-links" id="resultLinks"></div>
+  </div>
+
+  <!-- Pre-built strategies -->
+  <div class="section-title">🔥 Ready-Made Searches — Click & Go</div>
+  <div class="strategies">
+
+    <div class="strategy-card">
+      <div class="strategy-header">
+        <div class="strategy-left">
+          <span class="sbadge hot">🔥 HOTTEST</span>
+          <div class="sinfo">
+            <h4>APIs & Backend Tools (30–400 stars)</h4>
+            <p>Most devs skip docs entirely — huge opportunity</p>
+          </div>
+        </div>
+        <a class="open-btn" href="https://github.com/search?q=topic%3Aapi+stars%3A30..400+is%3Apublic&type=repositories&sort=updated" target="_blank">Open on GitHub ↗</a>
+      </div>
+      <div class="strategy-tip"><p><strong>What to look for:</strong> Open each repo and scroll to the README. If it's less than 20 lines, has no code examples, or says "TODO" — that's your prospect.</p></div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-header">
+        <div class="strategy-left">
+          <span class="sbadge hot">🔥 HOTTEST</span>
+          <div class="sinfo">
+            <h4>Repos with "TODO" in README</h4>
+            <p>Owner already knows docs are missing — easiest sell</p>
+          </div>
+        </div>
+        <a class="open-btn" href="https://github.com/search?q=stars%3A30..600+TODO+in%3Areadme+is%3Apublic&type=repositories&sort=updated" target="_blank">Open on GitHub ↗</a>
+      </div>
+      <div class="strategy-tip"><p><strong>What to look for:</strong> Any repo where the README literally says TODO or Coming Soon. The owner knows they need docs — you're solving a problem they've already identified.</p></div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-header">
+        <div class="strategy-left">
+          <span class="sbadge hot">🔥 HOTTEST</span>
+          <div class="sinfo">
+            <h4>Developer Tools (50–600 stars)</h4>
+            <p>Active projects, owners care about growth</p>
+          </div>
+        </div>
+        <a class="open-btn" href="https://github.com/search?q=topic%3Adeveloper-tools+stars%3A50..600+is%3Apublic&type=repositories&sort=updated" target="_blank">Open on GitHub ↗</a>
+      </div>
+      <div class="strategy-tip"><p><strong>What to look for:</strong> Tools updated in the last 30 days. The owner is actively building — they'll be more open to improving docs right now.</p></div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-header">
+        <div class="strategy-left">
+          <span class="sbadge warm">⚡ WARM</span>
+          <div class="sinfo">
+            <h4>Node.js / npm Packages (30–300 stars)</h4>
+            <p>Library authors rarely write good docs</p>
+          </div>
+        </div>
+        <a class="open-btn" href="https://github.com/search?q=topic%3Anodejs+stars%3A30..300+is%3Apublic&type=repositories&sort=updated" target="_blank">Open on GitHub ↗</a>
+      </div>
+      <div class="strategy-tip"><p><strong>What to look for:</strong> Packages where the README only shows npm install but nothing else. Offer a full usage guide with real code examples.</p></div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-header">
+        <div class="strategy-left">
+          <span class="sbadge warm">⚡ WARM</span>
+          <div class="sinfo">
+            <h4>Open-Source SaaS Projects (40–500 stars)</h4>
+            <p>Solo founders build fast and skip documentation</p>
+          </div>
+        </div>
+        <a class="open-btn" href="https://github.com/search?q=topic%3Asaas+stars%3A40..500+is%3Apublic&type=repositories&sort=updated" target="_blank">Open on GitHub ↗</a>
+      </div>
+      <div class="strategy-tip"><p><strong>What to look for:</strong> SaaS tools with no user guide or onboarding docs. Founders are too busy building to write docs — that's where you come in.</p></div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-header">
+        <div class="strategy-left">
+          <span class="sbadge warm">⚡ WARM</span>
+          <div class="sinfo">
+            <h4>Python Libraries (30–400 stars)</h4>
+            <p>Python devs write minimal READMEs</p>
+          </div>
+        </div>
+        <a class="open-btn" href="https://github.com/search?q=topic%3Apython+stars%3A30..400+is%3Apublic+language%3APython&type=repositories&sort=updated" target="_blank">Open on GitHub ↗</a>
+      </div>
+      <div class="strategy-tip"><p><strong>What to look for:</strong> Libraries missing installation instructions for different OS, no examples section, or no API reference table.</p></div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-header">
+        <div class="strategy-left">
+          <span class="sbadge good">✅ GOOD</span>
+          <div class="sinfo">
+            <h4>Auth & Security Libraries (30–300 stars)</h4>
+            <p>Highly technical — docs are critical but often missing</p>
+          </div>
+        </div>
+        <a class="open-btn" href="https://github.com/search?q=topic%3Aauthentication+stars%3A30..300+is%3Apublic&type=repositories&sort=updated" target="_blank">Open on GitHub ↗</a>
+      </div>
+      <div class="strategy-tip"><p><strong>What to look for:</strong> Auth libraries where setup is unclear and security considerations aren't documented. Owners know bad docs = fewer users.</p></div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-header">
+        <div class="strategy-left">
+          <span class="sbadge good">✅ GOOD</span>
+          <div class="sinfo">
+            <h4>CLI Tools (30–400 stars)</h4>
+            <p>CLI tools live or die by their documentation</p>
+          </div>
+        </div>
+        <a class="open-btn" href="https://github.com/search?q=topic%3Acli+stars%3A30..400+is%3Apublic&type=repositories&sort=updated" target="_blank">Open on GitHub ↗</a>
+      </div>
+      <div class="strategy-tip"><p><strong>What to look for:</strong> No command reference table, no flags documented, no usage examples. Offer a full command reference with examples.</p></div>
+    </div>
+
+  </div>
+
+  <!-- Outreach Messages -->
+  <div class="outreach-panel">
+    <h3>✉️ Outreach Messages — Ready to Copy</h3>
+    <p>Found a repo with a poor README? Pick a message, replace the brackets, and send it.</p>
+    <div class="msg-tabs">
+      <button class="msg-tab active" onclick="switchMsg(0,this)">Friendly & Direct</button>
+      <button class="msg-tab" onclick="switchMsg(1,this)">Value-First Offer</button>
+      <button class="msg-tab" onclick="switchMsg(2,this)">GitHub Issue</button>
+    </div>
+    <textarea id="msgBox"></textarea>
+    <button class="copy-msg-btn" onclick="copyMsg()">📋 Copy Message</button>
+  </div>
+
+  <!-- README Checklist -->
+  <div class="checklist">
+    <h3>✅ README Quality Checklist</h3>
+    <p>Open any repo and check these. If 3 or more are missing — it's a strong prospect. Tick them as you review.</p>
+    <div class="check-item">
+      <input type="checkbox" id="c1"/><label for="c1"><strong>No installation instructions</strong>No clear steps on how to install or set up the project.</label>
+    </div>
+    <div class="check-item">
+      <input type="checkbox" id="c2"/><label for="c2"><strong>No usage / code examples</strong>No code snippets showing how to actually use the library or tool.</label>
+    </div>
+    <div class="check-item">
+      <input type="checkbox" id="c3"/><label for="c3"><strong>No API or method reference</strong>No list of available methods, endpoints, or commands with parameters.</label>
+    </div>
+    <div class="check-item">
+      <input type="checkbox" id="c4"/><label for="c4"><strong>README under 20 lines</strong>Extremely short — barely describes what the project actually does.</label>
+    </div>
+    <div class="check-item">
+      <input type="checkbox" id="c5"/><label for="c5"><strong>Contains "TODO" or "Coming soon"</strong>Owner already knows docs are missing but hasn't written them yet.</label>
+    </div>
+    <div class="check-item">
+      <input type="checkbox" id="c6"/><label for="c6"><strong>No contributing guide</strong>No instructions for how other developers can contribute to the project.</label>
+    </div>
+    <div class="check-item">
+      <input type="checkbox" id="c7"/><label for="c7"><strong>Plain wall of text</strong>No badges, no headers, no formatting — just a block of unstructured text.</label>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const messages = [
+`Hi [Owner's Name],
+
+I came across [repo name] on GitHub — great project! I noticed the README could use some improvement, and cleaner docs would help more developers discover and adopt your work.
+
+I specialize in technical documentation for developer tools and APIs. I can write:
+• A professional README with setup guides and examples
+• Full API/method reference with code snippets
+• Contributing guidelines for open-source collaborators
+
+I'd love to put together a free sample section so you can see the quality before committing to anything.
+
+Would you be open to a quick chat, or should I just send over a sample?
+
+Best,
+[Your Name]
+[Your Portfolio Link]`,
+
+`Hi [Owner's Name],
+
+I've been exploring [repo name] and think it's solving a genuinely interesting problem. One thing I noticed — the README doesn't quite do the project justice yet.
+
+Poor documentation is one of the top reasons great projects get overlooked, and I'd hate to see that happen here.
+
+Here's what I'm offering: I'll write a fully revamped README for your repo — for free — no strings attached. If you like it and want more (API docs, user guides, contributing guidelines), we can discuss that separately.
+
+Interested? Just reply and I'll get started.
+
+[Your Name]
+[Your Portfolio Link]`,
+
+`Title: Your documentation could be holding back adoption
+
+Hi,
+
+I came across this project and really like what you're building. I noticed the documentation is quite minimal — no usage examples, no API reference, and the README doesn't fully explain what makes this special.
+
+I'm a technical writer specialising in developer documentation. I'd love to help improve your docs so more developers can find and use your project.
+
+I can offer:
+✅ Professional README rewrite
+✅ Usage examples with real code snippets
+✅ API or method reference table
+
+Happy to do a free sample first. Let me know if you're interested!
+
+[Your Name]
+[Your Portfolio Link]`
+];
+
+document.getElementById('msgBox').value = messages[0];
+
+function switchMsg(i, btn) {
+  document.getElementById('msgBox').value = messages[i];
+  document.querySelectorAll('.msg-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function copyMsg() {
+  navigator.clipboard.writeText(document.getElementById('msgBox').value).then(() => {
+    const btn = document.querySelector('.copy-msg-btn');
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy Message', 2000);
+  });
+}
+
+function buildSearch() {
+  const topic = document.getElementById('topic').value;
+  const min = document.getElementById('minStars').value || 30;
+  const max = document.getElementById('maxStars').value || 500;
+  const lang = document.getElementById('language').value;
+  const lp = lang ? `+language%3A${encodeURIComponent(lang)}` : '';
+  const base = 'https://github.com/search?type=repositories';
+
+  const searches = [
+    { label: `🔥 ${topic} repos (${min}–${max} stars) — Recently Updated`, url: `${base}&sort=updated&q=topic%3A${topic}+stars%3A${min}..${max}+is%3Apublic${lp}` },
+    { label: `📄 ${topic} repos with "TODO" in README — Docs Clearly Missing`, url: `${base}&sort=updated&q=topic%3A${topic}+stars%3A${min}..${max}+TODO+in%3Areadme+is%3Apublic${lp}` },
+    { label: `⭐ ${topic} repos — Sorted by Most Stars`, url: `${base}&sort=stars&q=topic%3A${topic}+stars%3A${min}..${max}+is%3Apublic${lp}` },
+    { label: `🆕 ${topic} repos — Sorted by Newest`, url: `${base}&sort=updated&order=desc&q=topic%3A${topic}+stars%3A${min}..${max}+is%3Apublic+created%3A>2024-01-01${lp}` },
+  ];
+
+  const box = document.getElementById('resultBox');
+  box.style.display = 'block';
+  document.getElementById('resultLinks').innerHTML = searches.map(s =>
+    `<a class="result-link" href="${s.url}" target="_blank">
+      <span class="rl-label">${s.label}</span>
+      <span class="rl-arrow">↗</span>
+    </a>`
+  ).join('');
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>

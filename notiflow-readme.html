@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NotiFlow — README</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #09090f;
+      --surface: #111118;
+      --border: #1e1e2e;
+      --text: #e2e0ef;
+      --muted: #6e6c85;
+      --purple: #a78bfa;
+      --pink: #f472b6;
+      --cyan: #22d3ee;
+      --green: #4ade80;
+      --yellow: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text); max-width: 860px; margin: 0 auto; padding: 48px 32px; line-height: 1.7; }
+
+    /* Header */
+    .readme-header { text-align: center; padding: 48px 0 40px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+    .logo-line { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 20px; }
+    .logo-icon { width: 52px; height: 52px; background: linear-gradient(135deg, var(--purple), var(--pink)); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+    .logo-text { font-size: 36px; font-weight: 700; letter-spacing: -1px; }
+    .logo-text span { background: linear-gradient(90deg, var(--purple), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .tagline { color: var(--muted); font-size: 17px; margin-bottom: 24px; }
+    .badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: 500; }
+    .badge-purple { background: rgba(167,139,250,0.15); color: var(--purple); border: 1px solid rgba(167,139,250,0.3); }
+    .badge-pink   { background: rgba(244,114,182,0.15); color: var(--pink);   border: 1px solid rgba(244,114,182,0.3); }
+    .badge-cyan   { background: rgba(34,211,238,0.15);  color: var(--cyan);   border: 1px solid rgba(34,211,238,0.3); }
+    .badge-green  { background: rgba(74,222,128,0.15);  color: var(--green);  border: 1px solid rgba(74,222,128,0.3); }
+
+    /* TOC */
+    .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 40px; }
+    .toc h3 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+    .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .toc a { font-size: 14px; color: var(--purple); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .toc a:hover { color: var(--pink); }
+    .toc a::before { content: '→'; color: var(--muted); font-size: 12px; }
+
+    /* Sections */
+    h2 { font-size: 22px; font-weight: 700; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h2 .icon { margin-right: 8px; }
+    h3 { font-size: 16px; font-weight: 600; color: var(--purple); margin: 24px 0 10px; }
+    p { color: #b0aec8; font-size: 15px; margin-bottom: 14px; line-height: 1.8; }
+    a { color: var(--purple); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: rgba(255,255,255,0.07); padding: 2px 7px; border-radius: 5px; color: var(--pink); }
+
+    /* Code blocks */
+    .code-block { background: #0d0d14; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 14px 0; }
+    .cb-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .cb-lang { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); font-weight: 500; text-transform: uppercase; }
+    .copy-btn { font-size: 11px; color: var(--purple); cursor: pointer; background: none; border: 1px solid rgba(167,139,250,0.3); border-radius: 5px; padding: 3px 10px; font-family: 'JetBrains Mono', monospace; transition: all 0.15s; }
+    .copy-btn:hover { background: rgba(167,139,250,0.15); }
+    pre { padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; overflow-x: auto; color: var(--text); }
+    .kw  { color: #c084fc; }
+    .str { color: #4ade80; }
+    .fn  { color: #fbbf24; }
+    .cm  { color: #4a4a6a; }
+    .key { color: #22d3ee; }
+    .num { color: #fb923c; }
+
+    /* Feature grid */
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0; }
+    .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+    .feature-card .fc-icon { font-size: 22px; margin-bottom: 8px; }
+    .feature-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    .feature-card p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
+
+    /* Channel table */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+    th { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+    td { padding: 10px 14px; border-bottom: 1px solid rgba(30,30,46,0.5); color: #b0aec8; vertical-align: middle; font-size: 13px; }
+    .check { color: var(--green); }
+    .cross { color: var(--muted); }
+
+    /* Config table */
+    .cf-name { font-family: 'JetBrains Mono', monospace; color: var(--cyan); font-size: 13px; }
+    .cf-type { font-family: 'JetBrains Mono', monospace; color: var(--purple); font-size: 12px; }
+    .req { font-size: 10px; background: rgba(244,114,182,0.15); color: var(--pink); padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-weight: 700; }
+    .opt { font-size: 10px; background: rgba(110,108,133,0.15); color: var(--muted); padding: 2px 6px; border-radius: 4px; margin-left: 4px; }
+
+    /* Alert */
+    .alert { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); border-radius: 10px; padding: 14px 18px; margin: 16px 0; }
+    .alert p { color: var(--yellow); font-size: 13px; margin: 0; }
+
+    /* Footer */
+    .readme-footer { text-align: center; padding: 40px 0 0; border-top: 1px solid var(--border); margin-top: 48px; }
+    .readme-footer p { font-size: 13px; color: var(--muted); }
+
+    @media (max-width: 600px) {
+      .toc-grid { grid-template-columns: 1fr; }
+      .feature-grid { grid-template-columns: 1fr; }
+      body { padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="readme-header">
+  <div class="logo-line">
+    <div class="logo-icon">🔔</div>
+    <div class="logo-text">Noti<span>Flow</span></div>
+  </div>
+  <p class="tagline">Multi-channel notification delivery for modern SaaS applications</p>
+  <div class="badges">
+    <span class="badge badge-purple">npm v2.4.1</span>
+    <span class="badge badge-green">MIT License</span>
+    <span class="badge badge-cyan">TypeScript</span>
+    <span class="badge badge-pink">100% test coverage</span>
+  </div>
+</div>
+
+<div class="toc">
+  <h3>Table of Contents</h3>
+  <div class="toc-grid">
+    <a href="#overview">Overview</a>
+    <a href="#install">Installation</a>
+    <a href="#features">Features</a>
+    <a href="#quickstart">Quick Start</a>
+    <a href="#channels">Supported Channels</a>
+    <a href="#config">Configuration</a>
+    <a href="#api">API Reference</a>
+    <a href="#contributing">Contributing</a>
+  </div>
+</div>
+
+<h2 id="overview"><span class="icon">📋</span>Overview</h2>
+<p>NotiFlow is a unified notification SDK that lets you send alerts via email, SMS, push, Slack, and webhooks from a single, consistent API. No more juggling five different SDKs for five different channels.</p>
+<p>Built for Node.js and TypeScript, NotiFlow handles retries, templating, batching, and delivery tracking out of the box — so you can focus on building, not plumbing.</p>
+
+<h2 id="install"><span class="icon">📦</span>Installation</h2>
+<div class="code-block">
+  <div class="cb-header"><span class="cb-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="cm"># npm</span>
+npm install notiflow
+
+<span class="cm"># yarn</span>
+yarn add notiflow
+
+<span class="cm"># pnpm</span>
+pnpm add notiflow</pre>
+</div>
+
+<h2 id="features"><span class="icon">✨</span>Features</h2>
+<div class="feature-grid">
+  <div class="feature-card"><div class="fc-icon">📬</div><h4>Multi-channel</h4><p>Email, SMS, Push, Slack, and Webhooks from one unified API.</p></div>
+  <div class="feature-card"><div class="fc-icon">🔁</div><h4>Auto Retry</h4><p>Configurable retry logic with exponential backoff on failed deliveries.</p></div>
+  <div class="feature-card"><div class="fc-icon">🎨</div><h4>Templating</h4><p>Handlebars-compatible templates with variable injection support.</p></div>
+  <div class="feature-card"><div class="fc-icon">📊</div><h4>Delivery Tracking</h4><p>Track sent, delivered, opened, and failed statuses per notification.</p></div>
+</div>
+
+<h2 id="quickstart"><span class="icon">🚀</span>Quick Start</h2>
+<div class="code-block">
+  <div class="cb-header"><span class="cb-lang">TypeScript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="kw">import</span> { NotiFlow } <span class="kw">from</span> <span class="str">'notiflow'</span>;
+
+<span class="kw">const</span> notify = <span class="kw">new</span> <span class="fn">NotiFlow</span>({
+  email: { provider: <span class="str">'sendgrid'</span>, apiKey: process.env.<span class="key">SG_API_KEY</span> },
+  sms:   { provider: <span class="str">'twilio'</span>,   sid: process.env.<span class="key">TW_SID</span>, token: process.env.<span class="key">TW_TOKEN</span> }
+});
+
+<span class="cm">// Send an email</span>
+<span class="kw">await</span> notify.<span class="fn">send</span>({
+  channel: <span class="str">'email'</span>,
+  to: <span class="str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f88d8b9d8ab89d80999588949dd69b9795">[email&#160;protected]</a>'</span>,
+  subject: <span class="str">'Your order shipped!'</span>,
+  template: <span class="str">'order-shipped'</span>,
+  data: { orderId: <span class="str">'ORD-9921'</span>, estimatedDelivery: <span class="str">'Mar 15'</span> }
+});
+
+<span class="cm">// Send an SMS</span>
+<span class="kw">await</span> notify.<span class="fn">send</span>({
+  channel: <span class="str">'sms'</span>,
+  to: <span class="str">'+2348012345678'</span>,
+  message: <span class="str">'Your OTP is 482910. Valid for 5 minutes.'</span>
+});</pre>
+</div>
+
+<h2 id="channels"><span class="icon">📡</span>Supported Channels</h2>
+<table>
+  <thead><tr><th>Channel</th><th>Provider Options</th><th>Templating</th><th>Delivery Tracking</th></tr></thead>
+  <tbody>
+    <tr><td>📧 Email</td><td>SendGrid, Mailgun, SES</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+    <tr><td>📱 SMS</td><td>Twilio, Vonage, Termii</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+    <tr><td>🔔 Push</td><td>FCM, APNs</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+    <tr><td>💬 Slack</td><td>Slack Webhooks</td><td><span class="check">✓</span></td><td><span class="cross">—</span></td></tr>
+    <tr><td>🌐 Webhook</td><td>Any HTTP endpoint</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+  </tbody>
+</table>
+
+<h2 id="config"><span class="icon">⚙️</span>Configuration</h2>
+<table>
+  <thead><tr><th>Option</th><th>Type</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><span class="cf-name">email</span><span class="opt">optional</span></td><td><span class="cf-type">object</span></td><td>Email provider config. Required to send emails.</td></tr>
+    <tr><td><span class="cf-name">sms</span><span class="opt">optional</span></td><td><span class="cf-type">object</span></td><td>SMS provider config. Required to send SMS.</td></tr>
+    <tr><td><span class="cf-name">retries</span><span class="opt">optional</span></td><td><span class="cf-type">number</span></td><td>Max retry attempts on failure. Default: <code>3</code>.</td></tr>
+    <tr><td><span class="cf-name">retryDelay</span><span class="opt">optional</span></td><td><span class="cf-type">number</span></td><td>Base delay in ms between retries. Default: <code>1000</code>.</td></tr>
+    <tr><td><span class="cf-name">templateDir</span><span class="opt">optional</span></td><td><span class="cf-type">string</span></td><td>Path to your templates folder. Default: <code>./templates</code>.</td></tr>
+    <tr><td><span class="cf-name">onDelivery</span><span class="opt">optional</span></td><td><span class="cf-type">function</span></td><td>Callback fired on each delivery event.</td></tr>
+  </tbody>
+</table>
+
+<div class="alert">
+  <p>⚠️ At least one channel (email, sms, push, etc.) must be configured. Calling <code>notify.send()</code> for an unconfigured channel throws a <code>ChannelNotConfiguredError</code>.</p>
+</div>
+
+<h2 id="api"><span class="icon">📖</span>API Reference</h2>
+<h3>notify.send( options )</h3>
+<p>Sends a notification on the specified channel. Returns a delivery receipt object.</p>
+<div class="code-block">
+  <div class="cb-header"><span class="cb-lang">Return value</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>{
+  <span class="key">id</span>: <span class="str">"ntf_7x9abc"</span>,
+  <span class="key">channel</span>: <span class="str">"email"</span>,
+  <span class="key">status</span>: <span class="str">"delivered"</span>,
+  <span class="key">sentAt</span>: <span class="str">"2025-03-06T10:00:00Z"</span>,
+  <span class="key">attempts</span>: <span class="num">1</span>
+}</pre>
+</div>
+
+<h3>notify.batch( notifications[] )</h3>
+<p>Send multiple notifications in a single call. Processes in parallel with configurable concurrency.</p>
+<div class="code-block">
+  <div class="cb-header"><span class="cb-lang">TypeScript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><span class="kw">const</span> results = <span class="kw">await</span> notify.<span class="fn">batch</span>([
+  { channel: <span class="str">'email'</span>, to: <span class="str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b4d5f4d1ccd5d9c4d8d19ad7dbd9">[email&#160;protected]</a>'</span>, subject: <span class="str">'Hi A'</span>, message: <span class="str">'Hello!'</span> },
+  { channel: <span class="str">'sms'</span>,   to: <span class="str">'+2348011111111'</span>,            message: <span class="str">'Your code: 1234'</span> },
+]);
+<span class="cm">// Returns array of delivery receipts</span></pre>
+</div>
+
+<h2 id="contributing"><span class="icon">🤝</span>Contributing</h2>
+<p>Contributions are welcome! Please fork the repository, create a feature branch, and open a pull request. Make sure all tests pass before submitting.</p>
+<div class="code-block">
+  <div class="cb-header"><span class="cb-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre>git clone https://github.com/your-org/notiflow.git
+cd notiflow
+npm install
+npm test        <span class="cm"># Run test suite</span>
+npm run build   <span class="cm"># Build TypeScript</span></pre>
+</div>
+
+<div class="readme-footer">
+  <p>Made with ❤️ · MIT License · NotiFlow v2.4.1</p>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd7

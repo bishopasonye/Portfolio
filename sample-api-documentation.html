@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TaskFlow API Documentation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e2e8f0; display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 260px; min-height: 100vh; background: #161b27; border-right: 1px solid #2d3748;
+      padding: 24px 0; position: fixed; top: 0; left: 0; overflow-y: auto; z-index: 100;
+    }
+    .sidebar-logo { padding: 0 24px 24px; border-bottom: 1px solid #2d3748; margin-bottom: 16px; }
+    .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; color: #fff; }
+    .sidebar-logo .version { font-size: 11px; background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 12px; margin-left: 8px; }
+    .nav-section { padding: 8px 24px; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-top: 12px; }
+    .nav-item { display: block; padding: 8px 24px; font-size: 13px; color: #94a3b8; text-decoration: none; border-left: 2px solid transparent; transition: all 0.15s; }
+    .nav-item:hover, .nav-item.active { color: #60a5fa; border-left-color: #2563eb; background: rgba(37,99,235,0.08); }
+
+    .main { margin-left: 260px; flex: 1; padding: 48px 56px; max-width: 960px; }
+
+    .page-header { margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid #2d3748; }
+    .page-header h1 { font-size: 36px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .page-header p { color: #94a3b8; font-size: 16px; line-height: 1.6; max-width: 600px; }
+    .badge-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+    .badge { font-size: 12px; padding: 4px 10px; border-radius: 6px; font-weight: 500; }
+    .badge-blue   { background: rgba(37,99,235,0.2);   color: #60a5fa; border: 1px solid rgba(37,99,235,0.3); }
+    .badge-green  { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
+    .badge-yellow { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+
+    .section { margin-bottom: 52px; }
+    .section h2 { font-size: 22px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+    .section > p { color: #94a3b8; margin-bottom: 20px; line-height: 1.7; }
+
+    .base-url { background: #161b27; border: 1px solid #2d3748; border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .base-url .label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; min-width: 90px; }
+    .base-url .url { font-family: 'Courier New', monospace; font-size: 14px; color: #60a5fa; }
+
+    .endpoint { border: 1px solid #2d3748; border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+    .endpoint-header { display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: #161b27; }
+    .method { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px; min-width: 65px; text-align: center; letter-spacing: 0.5px; }
+    .method.get    { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .method.post   { background: rgba(37,99,235,0.15);  color: #60a5fa; border: 1px solid rgba(37,99,235,0.3); }
+    .method.put    { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .method.delete { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .endpoint-path { font-family: 'Courier New', monospace; font-size: 14px; color: #e2e8f0; }
+    .endpoint-desc { margin-left: auto; font-size: 13px; color: #64748b; }
+    .endpoint-body { padding: 20px; border-top: 1px solid #2d3748; background: #0f1117; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+    th { text-align: left; padding: 10px 14px; background: #161b27; color: #64748b; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #2d3748; }
+    td { padding: 10px 14px; border-bottom: 1px solid #1e2535; color: #94a3b8; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .param-name { font-family: 'Courier New', monospace; color: #e2e8f0; font-size: 13px; }
+    .param-type { font-family: 'Courier New', monospace; color: #a78bfa; font-size: 12px; }
+    .required { font-size: 10px; background: rgba(239,68,68,0.15); color: #f87171; padding: 2px 6px; border-radius: 4px; margin-left: 4px; }
+    .optional  { font-size: 10px; background: rgba(100,116,139,0.15); color: #64748b; padding: 2px 6px; border-radius: 4px; margin-left: 4px; }
+
+    .code-block { background: #0a0d14; border: 1px solid #2d3748; border-radius: 10px; overflow: hidden; margin: 12px 0; }
+    .code-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: #161b27; border-bottom: 1px solid #2d3748; }
+    .code-lang { font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; }
+    .copy-btn { font-size: 11px; color: #60a5fa; cursor: pointer; background: none; border: 1px solid rgba(37,99,235,0.3); border-radius: 4px; padding: 3px 10px; transition: all 0.15s; }
+    .copy-btn:hover { background: rgba(37,99,235,0.15); }
+    pre { padding: 20px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.7; }
+    .kw  { color: #c084fc; }
+    .str { color: #34d399; }
+    .num { color: #fb923c; }
+    .key { color: #60a5fa; }
+
+    .tab { display: inline-block; padding: 6px 14px; font-size: 12px; border-radius: 6px 6px 0 0; border: 1px solid #2d3748; border-bottom: none; margin-bottom: 0; }
+    .tab.success { background: rgba(16,185,129,0.1); color: #34d399; }
+
+    .auth-box { background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.25); border-radius: 10px; padding: 20px; margin-bottom: 24px; }
+    .auth-box h4 { color: #60a5fa; font-size: 14px; margin-bottom: 8px; }
+    .auth-box p  { color: #94a3b8; font-size: 13px; line-height: 1.6; }
+
+    .callout { border-radius: 10px; padding: 16px 20px; margin: 16px 0; display: flex; gap: 12px; }
+    .callout.info { background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.2); }
+    .callout.warn { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+    .callout-icon { font-size: 16px; line-height: 1.6; }
+    .callout p { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+    .callout p strong { color: #e2e8f0; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .stat-card { background: #161b27; border: 1px solid #2d3748; border-radius: 10px; padding: 20px; }
+    .stat-card .value { font-size: 28px; font-weight: 800; color: #60a5fa; }
+    .stat-card .label { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+    code { font-family: 'Courier New', monospace; font-size: 12px; background: rgba(255,255,255,0.07); padding: 2px 6px; border-radius: 4px; color: #a78bfa; }
+    .section-label { font-size: 13px; font-weight: 600; color: #e2e8f0; margin-bottom: 10px; margin-top: 18px; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 20px; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .endpoint-desc { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-text">TaskFlow API</span>
+    <span class="version">v2.1</span>
+  </div>
+  <div class="nav-section">Getting Started</div>
+  <a class="nav-item active" href="#overview">Overview</a>
+  <a class="nav-item" href="#authentication">Authentication</a>
+  <a class="nav-item" href="#rate-limits">Rate Limits</a>
+  <div class="nav-section">Endpoints</div>
+  <a class="nav-item" href="#tasks">Tasks</a>
+  <a class="nav-item" href="#projects">Projects</a>
+  <a class="nav-item" href="#users">Users</a>
+  <div class="nav-section">Reference</div>
+  <a class="nav-item" href="#errors">Error Codes</a>
+  <a class="nav-item" href="#changelog">Changelog</a>
+</nav>
+
+<main class="main">
+
+  <!-- Overview -->
+  <div class="page-header" id="overview">
+    <h1>TaskFlow API</h1>
+    <p>A RESTful API for managing tasks, projects, and team collaboration. Build powerful integrations with clean, predictable endpoints and comprehensive responses.</p>
+    <div class="badge-row">
+      <span class="badge badge-blue">REST API</span>
+      <span class="badge badge-green">JSON</span>
+      <span class="badge badge-yellow">OAuth 2.0</span>
+    </div>
+  </div>
+
+  <!-- Base URL -->
+  <div class="section">
+    <h2>Base URL</h2>
+    <p>All API requests must be made over HTTPS. HTTP requests will be rejected.</p>
+    <div class="base-url">
+      <span class="label">Production</span>
+      <span class="url">https://api.taskflow.io/v2</span>
+    </div>
+    <div class="base-url">
+      <span class="label">Sandbox</span>
+      <span class="url">https://sandbox.taskflow.io/v2</span>
+    </div>
+  </div>
+
+  <!-- Authentication -->
+  <div class="section" id="authentication">
+    <h2>Authentication</h2>
+    <p>All API requests require a Bearer token in the <code>Authorization</code> header. Generate tokens from your dashboard — they expire after 90 days.</p>
+    <div class="auth-box">
+      <h4>🔐 Authorization Header</h4>
+      <p>Include your API key with every request. Never expose API keys in client-side or public code.</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">HTTP Header</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="key">Authorization</span>: Bearer <span class="str">tf_live_xxxxxxxxxxxxxxxxxxxx</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">cURL Example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">curl</span> -X GET \
+  https://api.taskflow.io/v2/tasks \
+  -H <span class="str">"Authorization: Bearer tf_live_xxxxxxxxxxxxxxxxxxxx"</span> \
+  -H <span class="str">"Content-Type: application/json"</span></pre>
+    </div>
+  </div>
+
+  <!-- Rate Limits -->
+  <div class="section" id="rate-limits">
+    <h2>Rate Limits</h2>
+    <p>Requests are limited per API key. Exceeding limits returns a <code>429 Too Many Requests</code> response.</p>
+    <div class="grid-2">
+      <div class="stat-card"><div class="value">1,000</div><div class="label">Requests / minute — Free plan</div></div>
+      <div class="stat-card"><div class="value">10,000</div><div class="label">Requests / minute — Pro plan</div></div>
+    </div>
+    <div class="callout info" style="margin-top:16px">
+      <span class="callout-icon">ℹ️</span>
+      <p><strong>Rate limit headers</strong> are returned with every response: <code>X-RateLimit-Limit</code>, <code>X-RateLimit-Remaining</code>, and <code>X-RateLimit-Reset</code>.</p>
+    </div>
+  </div>
+
+  <!-- Tasks -->
+  <div class="section" id="tasks">
+    <h2>Tasks</h2>
+    <p>Create, read, update, and delete tasks. Every task belongs to a project and can be assigned to a team member.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/tasks</span>
+        <span class="endpoint-desc">List all tasks</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:16px">Returns a paginated list of tasks for the authenticated workspace.</p>
+        <p class="section-label">Query Parameters</p>
+        <table>
+          <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">project_id</span><span class="optional">optional</span></td><td><span class="param-type">string</span></td><td>Filter tasks by project ID.</td></tr>
+            <tr><td><span class="param-name">status</span><span class="optional">optional</span></td><td><span class="param-type">string</span></td><td>Filter by status: <code>open</code>, <code>in_progress</code>, <code>done</code>.</td></tr>
+            <tr><td><span class="param-name">limit</span><span class="optional">optional</span></td><td><span class="param-type">integer</span></td><td>Results per page. Default: <code>20</code>. Max: <code>100</code>.</td></tr>
+            <tr><td><span class="param-name">page</span><span class="optional">optional</span></td><td><span class="param-type">integer</span></td><td>Page number. Default: <code>1</code>.</td></tr>
+          </tbody>
+        </table>
+        <p class="section-label">Response</p>
+        <span class="tab success">200 OK</span>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JSON</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre>{
+  <span class="key">"data"</span>: [
+    {
+      <span class="key">"id"</span>: <span class="str">"task_8f3kd92"</span>,
+      <span class="key">"title"</span>: <span class="str">"Design landing page mockup"</span>,
+      <span class="key">"status"</span>: <span class="str">"in_progress"</span>,
+      <span class="key">"priority"</span>: <span class="str">"high"</span>,
+      <span class="key">"assignee_id"</span>: <span class="str">"usr_4j2nm01"</span>,
+      <span class="key">"project_id"</span>: <span class="str">"proj_1a9xk33"</span>,
+      <span class="key">"due_date"</span>: <span class="str">"2025-04-15T00:00:00Z"</span>,
+      <span class="key">"created_at"</span>: <span class="str">"2025-03-01T09:14:22Z"</span>
+    }
+  ],
+  <span class="key">"pagination"</span>: {
+    <span class="key">"total"</span>: <span class="num">84</span>,
+    <span class="key">"page"</span>: <span class="num">1</span>,
+    <span class="key">"limit"</span>: <span class="num">20</span>,
+    <span class="key">"has_more"</span>: <span class="kw">true</span>
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method post">POST</span>
+        <span class="endpoint-path">/tasks</span>
+        <span class="endpoint-desc">Create a task</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:16px">Creates a new task in the specified project.</p>
+        <p class="section-label">Request Body</p>
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">title</span><span class="required">required</span></td><td><span class="param-type">string</span></td><td>Task title. Max 255 characters.</td></tr>
+            <tr><td><span class="param-name">project_id</span><span class="required">required</span></td><td><span class="param-type">string</span></td><td>ID of the project this task belongs to.</td></tr>
+            <tr><td><span class="param-name">description</span><span class="optional">optional</span></td><td><span class="param-type">string</span></td><td>Detailed description. Supports Markdown.</td></tr>
+            <tr><td><span class="param-name">priority</span><span class="optional">optional</span></td><td><span class="param-type">string</span></td><td>One of <code>low</code>, <code>medium</code>, <code>high</code>, <code>urgent</code>. Default: <code>medium</code>.</td></tr>
+            <tr><td><span class="param-name">assignee_id</span><span class="optional">optional</span></td><td><span class="param-type">string</span></td><td>User ID to assign the task to.</td></tr>
+            <tr><td><span class="param-name">due_date</span><span class="optional">optional</span></td><td><span class="param-type">string (ISO 8601)</span></td><td>Deadline, e.g. <code>2025-04-30T00:00:00Z</code>.</td></tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">cURL Request</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">curl</span> -X POST \
+  https://api.taskflow.io/v2/tasks \
+  -H <span class="str">"Authorization: Bearer tf_live_xxxx"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d '{
+    <span class="key">"title"</span>: <span class="str">"Design landing page mockup"</span>,
+    <span class="key">"project_id"</span>: <span class="str">"proj_1a9xk33"</span>,
+    <span class="key">"priority"</span>: <span class="str">"high"</span>,
+    <span class="key">"due_date"</span>: <span class="str">"2025-04-15T00:00:00Z"</span>
+  }'</pre>
+        </div>
+        <span class="tab success">201 Created</span>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JSON</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre>{
+  <span class="key">"data"</span>: {
+    <span class="key">"id"</span>: <span class="str">"task_9a1bc74"</span>,
+    <span class="key">"title"</span>: <span class="str">"Design landing page mockup"</span>,
+    <span class="key">"status"</span>: <span class="str">"open"</span>,
+    <span class="key">"priority"</span>: <span class="str">"high"</span>,
+    <span class="key">"project_id"</span>: <span class="str">"proj_1a9xk33"</span>,
+    <span class="key">"due_date"</span>: <span class="str">"2025-04-15T00:00:00Z"</span>,
+    <span class="key">"created_at"</span>: <span class="str">"2025-03-06T10:00:00Z"</span>
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method put">PUT</span>
+        <span class="endpoint-path">/tasks/{id}</span>
+        <span class="endpoint-desc">Update a task</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">Updates fields on an existing task. Only include fields you wish to change.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">cURL Request</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">curl</span> -X PUT \
+  https://api.taskflow.io/v2/tasks/task_9a1bc74 \
+  -H <span class="str">"Authorization: Bearer tf_live_xxxx"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d '{ <span class="key">"status"</span>: <span class="str">"done"</span> }'</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method delete">DELETE</span>
+        <span class="endpoint-path">/tasks/{id}</span>
+        <span class="endpoint-desc">Delete a task</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">Permanently deletes a task. This action cannot be undone.</p>
+        <div class="callout warn">
+          <span class="callout-icon">⚠️</span>
+          <p><strong>Irreversible.</strong> Deleting a task also removes all associated comments, attachments, and activity history.</p>
+        </div>
+        <div class="code-block" style="margin-top:12px">
+          <div class="code-header"><span class="code-lang">cURL Request</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">curl</span> -X DELETE \
+  https://api.taskflow.io/v2/tasks/task_9a1bc74 \
+  -H <span class="str">"Authorization: Bearer tf_live_xxxx"</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects -->
+  <div class="section" id="projects">
+    <h2>Projects</h2>
+    <p>Projects are containers for tasks and team members. Each workspace can have unlimited projects.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/projects</span>
+        <span class="endpoint-desc">List all projects</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">Returns all projects in the authenticated workspace.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JSON Response</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre>{
+  <span class="key">"data"</span>: [
+    {
+      <span class="key">"id"</span>: <span class="str">"proj_1a9xk33"</span>,
+      <span class="key">"name"</span>: <span class="str">"Website Redesign"</span>,
+      <span class="key">"status"</span>: <span class="str">"active"</span>,
+      <span class="key">"task_count"</span>: <span class="num">12</span>,
+      <span class="key">"created_at"</span>: <span class="str">"2025-01-10T08:00:00Z"</span>
+    }
+  ]
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method post">POST</span>
+        <span class="endpoint-path">/projects</span>
+        <span class="endpoint-desc">Create a project</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">Creates a new project in the workspace.</p>
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="param-name">name</span><span class="required">required</span></td><td><span class="param-type">string</span></td><td>Project name. Max 100 characters.</td></tr>
+            <tr><td><span class="param-name">description</span><span class="optional">optional</span></td><td><span class="param-type">string</span></td><td>Short description of the project.</td></tr>
+            <tr><td><span class="param-name">color</span><span class="optional">optional</span></td><td><span class="param-type">string (hex)</span></td><td>Label color, e.g. <code>#2563eb</code>. Default: <code>#64748b</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users -->
+  <div class="section" id="users">
+    <h2>Users</h2>
+    <p>Retrieve and manage workspace members. Users can be assigned to tasks and projects.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/users</span>
+        <span class="endpoint-desc">List workspace members</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">Returns all users in the current workspace.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JSON Response</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre>{
+  <span class="key">"data"</span>: [
+    {
+      <span class="key">"id"</span>: <span class="str">"usr_4j2nm01"</span>,
+      <span class="key">"name"</span>: <span class="str">"Amara Osei"</span>,
+      <span class="key">"email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="04656965766544676b6974656a7d2a6d6b">[email&#160;protected]</a>"</span>,
+      <span class="key">"role"</span>: <span class="str">"admin"</span>,
+      <span class="key">"joined_at"</span>: <span class="str">"2024-11-05T14:22:00Z"</span>
+    }
+  ]
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/users/{id}</span>
+        <span class="endpoint-desc">Get a single user</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="color:#94a3b8;font-size:13px">Returns full profile details for a single workspace member by their user ID.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Codes -->
+  <div class="section" id="errors">
+    <h2>Error Codes</h2>
+    <p>All errors return a consistent JSON body with a machine-readable <code>code</code> and a human-readable <code>message</code>.</p>
+    <table>
+      <thead><tr><th>HTTP Status</th><th>Code</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><span style="color:#34d399">200</span></td><td>success</td><td>Request completed successfully.</td></tr>
+        <tr><td><span style="color:#60a5fa">201</span></td><td>created</td><td>Resource created successfully.</td></tr>
+        <tr><td><span style="color:#f87171">400</span></td><td>invalid_request</td><td>Missing or malformed parameters.</td></tr>
+        <tr><td><span style="color:#f87171">401</span></td><td>unauthorized</td><td>Invalid or expired API key.</td></tr>
+        <tr><td><span style="color:#f87171">403</span></td><td>forbidden</td><td>Insufficient permissions for this resource.</td></tr>
+        <tr><td><span style="color:#f87171">404</span></td><td>not_found</td><td>Requested resource does not exist.</td></tr>
+        <tr><td><span style="color:#fbbf24">429</span></td><td>rate_limited</td><td>Too many requests. Retry after the reset window.</td></tr>
+        <tr><td><span style="color:#f87171">500</span></td><td>server_error</td><td>Internal server error. Contact support.</td></tr>
+      </tbody>
+    </table>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Error Response Example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre>{
+  <span class="key">"error"</span>: {
+    <span class="key">"code"</span>: <span class="str">"invalid_request"</span>,
+    <span class="key">"message"</span>: <span class="str">"The field 'title' is required and cannot be empty."</span>,
+    <span class="key">"request_id"</span>: <span class="str">"req_7x2nm019kd"</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Changelog -->
+  <div class="section" id="changelog">
+    <h2>Changelog</h2>
+    <p>Recent updates to the TaskFlow API.</p>
+    <table>
+      <thead><tr><th>Version</th><th>Date</th><th>Changes</th></tr></thead>
+      <tbody>
+        <tr><td>v2.1</td><td>March 2025</td><td>Added <code>priority</code> field to tasks. Increased Pro rate limits to 10,000 req/min.</td></tr>
+        <tr><td>v2.0</td><td>Jan 2025</td><td>Introduced Projects and Users endpoints. Breaking: <code>assignee</code> renamed to <code>assignee_id</code>.</td></tr>
+        <tr><td>v1.0</td><td>Oct 2024</td><td>Initial release with Tasks CRUD.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div style="border-top:1px solid #2d3748;padding-top:24px;margin-top:32px;color:#475569;font-size:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <span>TaskFlow API Documentation · v2.1</span>
+    <span>Last updated: March 2025</span>
+  </div>
+
+</main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.style.color = '#34d399';
+      setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 2000);
+    });
+  }
+
+  // Highlight active nav item on scroll
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.nav-item');
+  window.addEventListener('scroll', () => {
+    let current

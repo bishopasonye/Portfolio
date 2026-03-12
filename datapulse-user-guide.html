@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DataPulse — User Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #faf8f4;
+      --warm: #f0ebe0;
+      --ink: #1c1410;
+      --accent: #2563eb;
+      --accent-light: #dbeafe;
+      --green: #166534;
+      --green-bg: #dcfce7;
+      --muted: #78716c;
+      --border: #e5e0d5;
+      --red: #dc2626;
+      --red-bg: #fee2e2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+
+    /* Header */
+    .site-header { background: var(--ink); color: #fff; padding: 0 48px; display: flex; justify-content: space-between; align-items: center; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .site-header .brand { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
+    .site-header .brand span { color: #60a5fa; }
+    .site-header .breadcrumb { font-size: 13px; color: #9ca3af; font-family: 'DM Mono', monospace; }
+    .site-header .breadcrumb a { color: #60a5fa; text-decoration: none; }
+
+    /* Layout */
+    .layout { display: grid; grid-template-columns: 250px 1fr 200px; max-width: 1200px; margin: 0 auto; }
+
+    /* Left nav */
+    .left-nav { border-right: 1px solid var(--border); padding: 32px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+    .lnav-title { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; padding: 12px 24px 6px; }
+    .lnav-link { display: block; font-size: 14px; color: var(--muted); text-decoration: none; padding: 7px 24px; transition: all 0.15s; border-left: 2px solid transparent; }
+    .lnav-link:hover, .lnav-link.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-light); }
+    .lnav-sub { font-size: 13px; padding-left: 36px; color: #a8a29e; }
+
+    /* Main */
+    .main-content { padding: 48px 56px; max-width: 720px; }
+
+    /* Article header */
+    .article-header { margin-bottom: 40px; padding-bottom: 28px; border-bottom: 2px solid var(--border); }
+    .article-category { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 10px; }
+    .article-header h1 { font-family: 'Fraunces', serif; font-size: 40px; font-weight: 900; line-height: 1.15; letter-spacing: -1px; margin-bottom: 14px; }
+    .article-meta { display: flex; gap: 20px; font-size: 13px; color: var(--muted); }
+    .article-meta span { display: flex; align-items: center; gap: 5px; }
+
+    /* Sections */
+    h2 { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; margin: 40px 0 14px; }
+    h3 { font-size: 17px; font-weight: 600; margin: 28px 0 10px; color: var(--ink); }
+    p  { font-size: 15px; color: #44403c; line-height: 1.8; margin-bottom: 16px; }
+    code { font-family: 'DM Mono', monospace; font-size: 13px; background: var(--warm); padding: 2px 7px; border-radius: 4px; color: var(--accent); border: 1px solid var(--border); }
+
+    /* Step cards */
+    .steps { display: flex; flex-direction: column; gap: 0; margin: 20px 0; }
+    .step { display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .step-num { width: 36px; height: 36px; background: var(--ink); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; margin-top: 2px; }
+    .step-content h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .step-content p { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.6; }
+
+    /* Code blocks */
+    .code-block { background: #1c1410; border-radius: 8px; overflow: hidden; margin: 14px 0; border: 1px solid #333; }
+    .cb-header { display: flex; justify-content: space-between; align-items: center; padding: 9px 16px; background: #261e18; border-bottom: 1px solid #333; }
+    .cb-label { font-family: 'DM Mono', monospace; font-size: 11px; color: #78716c; font-weight: 500; }
+    .copy-btn { font-size: 11px; color: #60a5fa; cursor: pointer; background: none; border: 1px solid rgba(96,165,250,0.3); border-radius: 4px; padding: 3px 10px; font-family: 'DM Mono', monospace; transition: all 0.15s; }
+    .copy-btn:hover { background: rgba(96,165,250,0.1); }
+    pre { padding: 18px; font-family: 'DM Mono', monospace; font-size: 13px; line-height: 1.75; overflow-x: auto; color: #e8e3db; }
+    .kw  { color: #c084fc; }
+    .str { color: #86efac; }
+    .fn  { color: #fbbf24; }
+    .cm  { color: #57534e; }
+    .key { color: #7dd3fc; }
+    .num { color: #fb923c; }
+
+    /* Info boxes */
+    .info-box { border-radius: 8px; padding: 16px 20px; margin: 18px 0; display: flex; gap: 12px; }
+    .info-box.tip   { background: var(--accent-light); border: 1px solid #bfdbfe; }
+    .info-box.warn  { background: #fef9c3; border: 1px solid #fde68a; }
+    .info-box.note  { background: var(--green-bg); border: 1px solid #bbf7d0; }
+    .info-box .ib-icon { font-size: 17px; }
+    .info-box p { font-size: 13px; color: var(--ink); margin: 0; line-height: 1.6; }
+    .info-box p strong { display: block; margin-bottom: 3px; }
+
+    /* Settings table */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 16px 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    th { text-align: left; padding: 10px 16px; background: var(--warm); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+    td { padding: 11px 16px; border-bottom: 1px solid var(--border); color: #57534e; }
+    tr:last-child td { border-bottom: none; }
+    .setting-name { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--ink); }
+
+    /* Right TOC */
+    .right-toc { padding: 32px 24px; border-left: 1px solid var(--border); position: sticky; top: 60px; height: calc(100vh - 60px); }
+    .right-toc h4 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 12px; }
+    .right-toc a { display: block; font-size: 12px; color: var(--muted); text-decoration: none; padding: 5px 0; transition: color 0.15s; border-left: 2px solid transparent; padding-left: 10px; }
+    .right-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .left-nav, .right-toc { display: none; }
+      .main-content { padding: 32px 20px; }
+      .site-header { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">Data<span>Pulse</span></div>
+  <div class="breadcrumb"><a href="#">Docs</a> / <a href="#">User Guide</a> / Getting Started</div>
+</header>
+
+<div class="layout">
+
+  <!-- Left nav -->
+  <nav class="left-nav">
+    <div class="lnav-title">Getting Started</div>
+    <a class="lnav-link active" href="#overview">Overview</a>
+    <a class="lnav-link" href="#setup">Initial Setup</a>
+    <a class="lnav-link" href="#connect">Connecting Data</a>
+
+    <div class="lnav-title">Dashboards</div>
+    <a class="lnav-link" href="#create">Creating Dashboards</a>
+    <a class="lnav-link lnav-sub" href="#widgets">Adding Widgets</a>
+    <a class="lnav-link lnav-sub" href="#filters">Filters & Date Ranges</a>
+
+    <div class="lnav-title">Alerts</div>
+    <a class="lnav-link" href="#alerts">Setting Up Alerts</a>
+    <a class="lnav-link lnav-sub" href="#thresholds">Thresholds</a>
+
+    <div class="lnav-title">Reference</div>
+    <a class="lnav-link" href="#shortcuts">Keyboard Shortcuts</a>
+    <a class="lnav-link" href="#faq">FAQ</a>
+  </nav>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <div class="article-header">
+      <div class="article-category">User Guide · Getting Started</div>
+      <h1>Getting Started with DataPulse</h1>
+      <div class="article-meta">
+        <span>⏱ 8 min read</span>
+        <span>📅 Updated March 2025</span>
+        <span>👤 For all plan types</span>
+      </div>
+    </div>
+
+    <p id="overview">DataPulse is a real-time analytics dashboard that connects to your databases, APIs, and third-party services to give you a unified view of your business metrics. This guide walks you through setup, connecting your first data source, and building your first dashboard.</p>
+
+    <div class="info-box tip">
+      <span class="ib-icon">💡</span>
+      <p><strong>Before you begin</strong> Make sure you have admin access to the data sources you want to connect. Read-only credentials work for most integrations, but some require write access for event tracking.</p>
+    </div>
+
+    <h2 id="setup">Initial Setup</h2>
+    <p>Follow these steps after creating your DataPulse account. The setup wizard covers most of this automatically, but here's what each step does and why it matters.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Verify Your Email</h4>
+          <p>Check your inbox for a verification link. Without this, you can't invite teammates or connect external data sources.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Create Your Workspace</h4>
+          <p>Your workspace is the container for all dashboards, data sources, and team members. Use your company name — it appears in shared links and exports.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Set Your Timezone</h4>
+          <p>Navigate to <strong>Settings → Workspace → Timezone</strong>. This affects all timestamp displays and scheduled report delivery times.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Invite Your Team</h4>
+          <p>Go to <strong>Settings → Members → Invite</strong>. Assign roles: <code>Admin</code>, <code>Editor</code>, or <code>Viewer</code>. Viewers can see dashboards but cannot edit or connect new data sources.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 id="connect">Connecting Your First Data Source</h2>
+    <p>DataPulse supports over 40 integrations. Here's how to connect a PostgreSQL database — the process is similar for other sources.</p>
+
+    <h3>Via the UI</h3>
+    <p>Go to <strong>Data Sources → Add New → PostgreSQL</strong>. Enter your connection credentials and click <strong>Test Connection</strong> before saving.</p>
+
+    <div class="info-box warn">
+      <span class="ib-icon">⚠️</span>
+      <p><strong>Use a read-only database user</strong> DataPulse only needs SELECT access. Never use a superuser or admin credential for analytics connections.</p>
+    </div>
+
+    <h3>Via Environment Config</h3>
+    <p>If you're self-hosting DataPulse, you can define data sources in your <code>.env</code> file:</p>
+
+    <div class="code-block">
+      <div class="cb-header"><span class="cb-label">.env</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm"># PostgreSQL connection</span>
+<span class="key">DP_DB_HOST</span>=your-db-host.rds.amazonaws.com
+<span class="key">DP_DB_PORT</span>=<span class="num">5432</span>
+<span class="key">DP_DB_NAME</span>=analytics_prod
+<span class="key">DP_DB_USER</span>=datapulse_readonly
+<span class="key">DP_DB_PASS</span>=<span class="str">your-secure-password</span>
+<span class="key">DP_DB_SSL</span>=<span class="str">true</span></pre>
+    </div>
+
+    <h2 id="create">Creating Your First Dashboard</h2>
+    <p>Click the <strong>+ New Dashboard</strong> button from the home screen. Give it a name and choose a layout template, or start blank.</p>
+
+    <h3 id="widgets">Adding Widgets</h3>
+    <p>Click <strong>Add Widget</strong> inside any dashboard. Choose a visualization type — Line Chart, Bar Chart, Number Card, Table, or Map — then select your data source and configure the query.</p>
+
+    <div class="info-box note">
+      <span class="ib-icon">✅</span>
+      <p><strong>Pro Tip</strong> Use Number Cards for key metrics at the top of your dashboard (e.g. MRR, DAU, Churn Rate), then use charts below to show trends over time.</p>
+    </div>
+
+    <h3 id="filters">Filters & Date Ranges</h3>
+    <p>Dashboard-level filters apply to all widgets simultaneously. Add a filter by clicking <strong>Filters → Add Filter</strong> at the top of your dashboard. Common filter types: date range, segment, region, and plan type.</p>
+
+    <h2 id="alerts">Setting Up Alerts</h2>
+    <p>Alerts notify you when a metric crosses a threshold. Go to <strong>Alerts → New Alert</strong>, pick a metric from any connected data source, and define your condition.</p>
+
+    <h3 id="thresholds">Threshold Types</h3>
+    <table>
+      <thead><tr><th>Type</th><th>Triggers When</th><th>Example Use Case</th></tr></thead>
+      <tbody>
+        <tr><td><span class="setting-name">above</span></td><td>Metric exceeds value</td><td>Error rate &gt; 5%</td></tr>
+        <tr><td><span class="setting-name">below</span></td><td>Metric drops below value</td><td>Daily signups &lt; 10</td></tr>
+        <tr><td><span class="setting-name">change_%</span></td><td>% change vs previous period</td><td>Revenue drops &gt;20% week-over-week</td></tr>
+        <tr><td><span class="setting-name">anomaly</span></td><td>ML-detected unusual pattern</td><td>Sudden traffic spike or drop</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="shortcuts">Keyboard Shortcuts</h2>
+    <table>
+      <thead><tr><th>Action</th><th>Shortcut</th></tr></thead>
+      <tbody>
+        <tr><td>Open command palette</td><td><code>Ctrl + K</code></td></tr>
+        <tr><td>New dashboard</td><td><code>Ctrl + Shift + N</code></td></tr>
+        <tr><td>Add widget</td><td><code>A</code> (on dashboard)</td></tr>
+        <tr><td>Toggle fullscreen widget</td><td><code>F</code></td></tr>
+        <tr><td>Refresh all data</td><td><code>Ctrl + R</code></td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="faq">FAQ</h2>
+    <h3>How often does data refresh?</h3>
+    <p>Free plans refresh every 24 hours. Pro plans support real-time streaming and configurable intervals (minimum 1 minute).</p>
+
+    <h3>Can I export dashboards to PDF?</h3>
+    <p>Yes. Click <strong>Share → Export PDF</strong> on any dashboard. You can also schedule automated PDF reports to be emailed to stakeholders on a daily or weekly basis.</p>
+
+    <h3>Is my data stored by DataPulse?</h3>
+    <p>DataPulse queries your data source directly and caches results for performance. Raw data is never permanently stored on DataPulse servers. See the <a href="#">Privacy Policy</a> for details.</p>
+
+  </main>
+
+  <!-- Right TOC -->
+  <aside class="right-toc">
+    <h4>On This Page</h4>
+    <a href="#overview">Overview</a>
+    <a href="#setup">Initial Setup</a>
+    <a href="#connect">Connecting Data</a>
+    <a href="#create">Creating Dashboards</a>
+    <a href="#widgets">Adding Widgets</a>
+    <a href="#alerts">Setting Up Alerts</a>
+    <a href="#shortcuts">Keyboard Shortcuts</a>
+    <a href="#faq">FAQ</a>
+  </aside>
+</div>
+
+<script>
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+  const links = document.querySelectorAll('.lnav-link');
+  const sections = document.querySelectorAll('[id]');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) cur = s.id; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+  });
+</script>
+</body>
+</html>

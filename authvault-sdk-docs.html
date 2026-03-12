@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AuthVault SDK — Documentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f5f0e8;
+      --ink: #1a1208;
+      --accent: #c84b11;
+      --accent2: #1a6b3a;
+      --muted: #7a6e5f;
+      --border: #d4c9b5;
+      --card: #ede8de;
+      --code-bg: #1a1208;
+      --code-fg: #f5f0e8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+    /* Top bar */
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 48px; border-bottom: 2px solid var(--ink); background: var(--bg); position: sticky; top: 0; z-index: 100; }
+    .topbar-logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    .topbar-logo span { color: var(--accent); }
+    .topbar-nav { display: flex; gap: 32px; }
+    .topbar-nav a { font-size: 13px; font-weight: 600; color: var(--muted); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: color 0.15s; }
+    .topbar-nav a:hover { color: var(--accent); }
+    .version-tag { font-family: 'IBM Plex Mono', monospace; font-size: 11px; background: var(--ink); color: var(--bg); padding: 4px 10px; border-radius: 2px; }
+
+    /* Hero */
+    .hero { padding: 72px 48px 56px; border-bottom: 2px solid var(--ink); display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .hero h1 { font-size: 56px; font-weight: 800; line-height: 1.0; letter-spacing: -2px; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p { margin-top: 20px; font-size: 16px; color: var(--muted); line-height: 1.7; max-width: 420px; }
+    .hero-badges { display: flex; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
+    .hbadge { font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 5px 12px; border: 1.5px solid var(--ink); border-radius: 2px; font-weight: 600; }
+    .hbadge.red { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .hbadge.green { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+    .install-box { background: var(--code-bg); color: var(--code-fg); padding: 28px; border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; line-height: 1.8; position: relative; }
+    .install-box .comment { color: #6b6050; }
+    .install-box .cmd { color: #f5c842; }
+    .install-box .str { color: #7ecf8e; }
+
+    /* Layout */
+    .layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 200px); }
+    .sidebar { border-right: 2px solid var(--ink); padding: 32px 0; position: sticky; top: 73px; height: calc(100vh - 73px); overflow-y: auto; }
+    .sidebar-section { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); padding: 16px 24px 6px; }
+    .sidebar a { display: block; font-size: 13px; font-weight: 600; color: var(--ink); text-decoration: none; padding: 8px 24px; border-left: 3px solid transparent; transition: all 0.15s; }
+    .sidebar a:hover, .sidebar a.active { border-left-color: var(--accent); color: var(--accent); background: rgba(200,75,17,0.06); }
+
+    /* Content */
+    .content { padding: 48px 56px; max-width: 800px; }
+    .section { margin-bottom: 56px; }
+    .section h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 2px solid var(--border); }
+    .section p { color: var(--muted); line-height: 1.8; margin-bottom: 16px; font-size: 15px; }
+
+    /* Method cards */
+    .method-card { border: 2px solid var(--ink); border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
+    .method-card-header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; background: var(--card); border-bottom: 2px solid var(--ink); }
+    .method-tag { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 2px; border: 1.5px solid; }
+    .tag-async { background: #fff3e0; color: #b45309; border-color: #b45309; }
+    .tag-sync  { background: #e8f5e9; color: var(--accent2); border-color: var(--accent2); }
+    .method-name { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; }
+    .method-body { padding: 20px; }
+    .method-body p { font-size: 14px; color: var(--muted); margin-bottom: 14px; }
+
+    /* Code */
+    .code-block { background: var(--code-bg); border-radius: 4px; overflow: hidden; margin: 12px 0; border: 2px solid var(--ink); }
+    .code-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid #333; }
+    .code-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6b6050; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .copy-btn { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); cursor: pointer; background: none; border: 1px solid var(--accent); border-radius: 2px; padding: 3px 10px; transition: all 0.15s; }
+    .copy-btn:hover { background: var(--accent); color: #fff; }
+    pre { padding: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; line-height: 1.8; overflow-x: auto; color: var(--code-fg); }
+    .kw  { color: #c084fc; }
+    .str { color: #7ecf8e; }
+    .fn  { color: #f5c842; }
+    .cm  { color: #6b6050; }
+    .key { color: #7eb8f5; }
+    .num { color: #fb923c; }
+
+    /* Params table */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 10px 14px; background: var(--card); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--ink); color: var(--muted); }
+    td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--muted); font-size: 13px; }
+    tr:last-child td { border-bottom: none; }
+    .pname { font-family: 'IBM Plex Mono', monospace; color: var(--ink); font-size: 13px; }
+    .ptype { font-family: 'IBM Plex Mono', monospace; color: var(--accent); font-size: 12px; }
+    .req { font-size: 10px; background: #fee2e2; color: #b91c1c; padding: 2px 6px; border-radius: 2px; margin-left: 4px; font-weight: 700; }
+    .opt { font-size: 10px; background: var(--card); color: var(--muted); padding: 2px 6px; border-radius: 2px; margin-left: 4px; }
+
+    /* Callout */
+    .callout { border-left: 4px solid var(--accent); background: rgba(200,75,17,0.06); padding: 16px 20px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+    .callout p { font-size: 13px; color: var(--ink); margin: 0; }
+    .callout.green { border-left-color: var(--accent2); background: rgba(26,107,58,0.06); }
+
+    /* Error table */
+    .err-code { font-family: 'IBM Plex Mono', monospace; color: var(--accent); font-weight: 600; }
+
+    /* Footer */
+    footer { border-top: 2px solid var(--ink); padding: 24px 48px; display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; }
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .content { padding: 24px 20px; }
+      .hero { padding: 40px 20px; }
+      .topbar { padding: 16px 20px; }
+      .topbar-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-logo">Auth<span>Vault</span> SDK</div>
+  <nav class="topbar-nav">
+    <a href="#quickstart">Quickstart</a>
+    <a href="#methods">Methods</a>
+    <a href="#errors">Errors</a>
+    <a href="#examples">Examples</a>
+  </nav>
+  <span class="version-tag">v3.2.0</span>
+</header>
+
+<div class="hero">
+  <div>
+    <h1>Auth<em>Vault</em><br/>SDK Docs</h1>
+    <p>A lightweight Node.js SDK for token-based authentication, session management, and role-based access control. Drop it in and be secure in minutes.</p>
+    <div class="hero-badges">
+      <span class="hbadge red">Node.js</span>
+      <span class="hbadge green">JWT + OAuth</span>
+      <span class="hbadge">TypeScript Ready</span>
+      <span class="hbadge">Zero Dependencies</span>
+    </div>
+  </div>
+  <div class="install-box">
+    <span class="comment"># Install via npm</span><br/>
+    <span class="cmd">npm install</span> <span class="str">authvault-sdk</span><br/><br/>
+    <span class="comment"># Or with yarn</span><br/>
+    <span class="cmd">yarn add</span> <span class="str">authvault-sdk</span><br/><br/>
+    <span class="comment"># Initialize</span><br/>
+    <span class="cmd">const</span> AuthVault = <span class="str">require</span>(<span class="str">'authvault-sdk'</span>);<br/>
+    <span class="cmd">const</span> auth = <span class="cmd">new</span> AuthVault({ secret: <span class="str">'your-secret'</span> });
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-section">Getting Started</div>
+    <a href="#quickstart" class="active">Quickstart</a>
+    <a href="#config">Configuration</a>
+    <div class="sidebar-section">Methods</div>
+    <a href="#generate">generateToken()</a>
+    <a href="#verify">verifyToken()</a>
+    <a href="#refresh">refreshToken()</a>
+    <a href="#revoke">revokeToken()</a>
+    <div class="sidebar-section">Reference</div>
+    <a href="#errors">Error Codes</a>
+    <a href="#examples">Full Examples</a>
+  </nav>
+
+  <main class="content">
+
+    <div class="section" id="quickstart">
+      <h2>Quickstart</h2>
+      <p>Get AuthVault running in under 5 minutes. Install the package, initialize with your secret key, and you're ready to generate and verify tokens.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">JavaScript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">const</span> AuthVault = <span class="fn">require</span>(<span class="str">'authvault-sdk'</span>);
+
+<span class="cm">// Initialize with your secret</span>
+<span class="kw">const</span> auth = <span class="kw">new</span> <span class="fn">AuthVault</span>({
+  secret: process.env.<span class="key">AUTH_SECRET</span>,
+  expiresIn: <span class="str">'7d'</span>,
+  algorithm: <span class="str">'HS256'</span>
+});
+
+<span class="cm">// Generate a token for a user</span>
+<span class="kw">const</span> token = <span class="kw">await</span> auth.<span class="fn">generateToken</span>({
+  userId: <span class="str">'usr_abc123'</span>,
+  role: <span class="str">'admin'</span>
+});
+
+<span class="cm">// Verify incoming token</span>
+<span class="kw">const</span> payload = <span class="kw">await</span> auth.<span class="fn">verifyToken</span>(token);
+console.<span class="fn">log</span>(payload.userId); <span class="cm">// 'usr_abc123'</span></pre>
+      </div>
+    </div>
+
+    <div class="section" id="config">
+      <h2>Configuration</h2>
+      <p>Pass a config object when initializing AuthVault. All options except <code style="font-family:monospace;background:#e8e0d0;padding:2px 6px;border-radius:2px">secret</code> have sensible defaults.</p>
+      <table>
+        <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pname">secret</span><span class="req">required</span></td><td><span class="ptype">string</span></td><td>—</td><td>Secret key for signing tokens. Use a long, random string in production.</td></tr>
+          <tr><td><span class="pname">expiresIn</span><span class="opt">optional</span></td><td><span class="ptype">string</span></td><td><code style="font-family:monospace">24h</code></td><td>Token lifetime. Accepts <code style="font-family:monospace">60s</code>, <code style="font-family:monospace">7d</code>, <code style="font-family:monospace">1y</code> etc.</td></tr>
+          <tr><td><span class="pname">algorithm</span><span class="opt">optional</span></td><td><span class="ptype">string</span></td><td><code style="font-family:monospace">HS256</code></td><td>Signing algorithm. Supports <code style="font-family:monospace">HS256</code>, <code style="font-family:monospace">HS512</code>, <code style="font-family:monospace">RS256</code>.</td></tr>
+          <tr><td><span class="pname">issuer</span><span class="opt">optional</span></td><td><span class="ptype">string</span></td><td>—</td><td>Token issuer claim (<code style="font-family:monospace">iss</code>). Useful for multi-tenant apps.</td></tr>
+          <tr><td><span class="pname">audience</span><span class="opt">optional</span></td><td><span class="ptype">string</span></td><td>—</td><td>Intended token audience (<code style="font-family:monospace">aud</code>). Validated on verify.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" id="methods">
+      <h2>Methods</h2>
+
+      <div class="method-card" id="generate">
+        <div class="method-card-header">
+          <span class="method-tag tag-async">async</span>
+          <span class="method-name">auth.generateToken( payload )</span>
+        </div>
+        <div class="method-body">
+          <p>Creates and signs a new JWT token with the provided payload. Returns the signed token string.</p>
+          <table>
+            <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pname">payload.userId</span><span class="req">required</span></td><td><span class="ptype">string</span></td><td>Unique identifier for the user.</td></tr>
+              <tr><td><span class="pname">payload.role</span><span class="opt">optional</span></td><td><span class="ptype">string</span></td><td>User role, e.g. <code style="font-family:monospace">admin</code>, <code style="font-family:monospace">user</code>, <code style="font-family:monospace">viewer</code>.</td></tr>
+              <tr><td><span class="pname">payload.meta</span><span class="opt">optional</span></td><td><span class="ptype">object</span></td><td>Any extra data to embed in the token.</td></tr>
+            </tbody>
+          </table>
+          <div class="code-block">
+            <div class="code-header"><span class="code-label">Returns → string</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="kw">const</span> token = <span class="kw">await</span> auth.<span class="fn">generateToken</span>({
+  userId: <span class="str">'usr_xyz'</span>,
+  role: <span class="str">'editor'</span>,
+  meta: { plan: <span class="str">'pro'</span> }
+});
+<span class="cm">// → "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="method-card" id="verify">
+        <div class="method-card-header">
+          <span class="method-tag tag-async">async</span>
+          <span class="method-name">auth.verifyToken( token )</span>
+        </div>
+        <div class="method-body">
+          <p>Validates a token's signature and expiry. Returns the decoded payload on success, throws <code style="font-family:monospace">AuthVaultError</code> on failure.</p>
+          <div class="callout">
+            <p>⚠️ Always wrap <code style="font-family:monospace">verifyToken()</code> in a try/catch block. An invalid or expired token throws rather than returning null.</p>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-label">Example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="kw">try</span> {
+  <span class="kw">const</span> payload = <span class="kw">await</span> auth.<span class="fn">verifyToken</span>(token);
+  console.<span class="fn">log</span>(payload.userId, payload.role);
+} <span class="kw">catch</span> (err) {
+  <span class="kw">if</span> (err.code === <span class="str">'TOKEN_EXPIRED'</span>) {
+    <span class="cm">// Prompt user to refresh</span>
+  }
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="method-card" id="refresh">
+        <div class="method-card-header">
+          <span class="method-tag tag-async">async</span>
+          <span class="method-name">auth.refreshToken( token )</span>
+        </div>
+        <div class="method-body">
+          <p>Issues a new token from an existing one without requiring the user to log in again. The original token is automatically revoked after refresh.</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-label">Example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="kw">const</span> newToken = <span class="kw">await</span> auth.<span class="fn">refreshToken</span>(expiredToken);
+<span class="cm">// Returns fresh token with same payload, new expiry</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="method-card" id="revoke">
+        <div class="method-card-header">
+          <span class="method-tag tag-sync">sync</span>
+          <span class="method-name">auth.revokeToken( token )</span>
+        </div>
+        <div class="method-body">
+          <p>Adds the token to an in-memory blocklist. Revoked tokens will fail verification even if not yet expired. Call this on user logout.</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-label">Example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>auth.<span class="fn">revokeToken</span>(token);
+<span class="cm">// Token immediately invalidated</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="errors">
+      <h2>Error Codes</h2>
+      <p>All errors are instances of <code style="font-family:monospace;background:#e8e0d0;padding:2px 6px;border-radius:2px">AuthVaultError</code> with a <code style="font-family:monospace;background:#e8e0d0;padding:2px 6px;border-radius:2px">code</code> and <code style="font-family:monospace;background:#e8e0d0;padding:2px 6px;border-radius:2px">message</code> property.</p>
+      <table>
+        <thead><tr><th>Code</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><span class="err-code">TOKEN_EXPIRED</span></td><td>Token has passed its expiry time. Refresh or re-authenticate.</td></tr>
+          <tr><td><span class="err-code">TOKEN_INVALID</span></td><td>Signature verification failed. Token may be tampered with.</td></tr>
+          <tr><td><span class="err-code">TOKEN_REVOKED</span></td><td>Token was explicitly revoked via <code style="font-family:monospace">revokeToken()</code>.</td></tr>
+          <tr><td><span class="err-code">PAYLOAD_MISSING</span></td><td>No payload passed to <code style="font-family:monospace">generateToken()</code>.</td></tr>
+          <tr><td><span class="err-code">SECRET_REQUIRED</span></td><td>AuthVault was initialized without a secret key.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" id="examples">
+      <h2>Full Express.js Example</h2>
+      <p>A complete authentication middleware using AuthVault in an Express.js application.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-label">Express Middleware</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> AuthVault = <span class="fn">require</span>(<span class="str">'authvault-sdk'</span>);
+
+<span class="kw">const</span> app = <span class="fn">express</span>();
+<span class="kw">const</span> auth = <span class="kw">new</span> <span class="fn">AuthVault</span>({ secret: process.env.<span class="key">AUTH_SECRET</span> });
+
+<span class="cm">// Middleware to protect routes</span>
+<span class="kw">async function</span> <span class="fn">requireAuth</span>(req, res, next) {
+  <span class="kw">const</span> token = req.headers.authorization?.<span class="fn">split</span>(<span class="str">' '</span>)[<span class="num">1</span>];
+  <span class="kw">if</span> (!token) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ error: <span class="str">'No token provided'</span> });
+
+  <span class="kw">try</span> {
+    req.user = <span class="kw">await</span> auth.<span class="fn">verifyToken</span>(token);
+    <span class="fn">next</span>();
+  } <span class="kw">catch</span> (err) {
+    res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ error: err.message, code: err.code });
+  }
+}
+
+<span class="cm">// Protected route</span>
+app.<span class="fn">get</span>(<span class="str">'/dashboard'</span>, requireAuth, (req, res) => {
+  res.<span class="fn">json</span>({ message: <span class="str">`Welcome, ${req.user.userId}`</span> });
+});</pre>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <span>AuthVault SDK Documentation · v3.2.0</span>
+  <span>Last updated: March 2025</span>
+</footer>
+
+<script>
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+  const links = document.querySelectorAll('.sidebar a');
+  const sections = document.querySelectorAll('[id]');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) cur = s.id; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+  });
+</script>
+</body>
+</html>
