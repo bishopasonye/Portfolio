@@ -3,178 +3,403 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Technical Writing Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <title>Bishop Asonye — Technical Writer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg: #0a0a0f;
-      --surface: #111118;
-      --border: #1e1e2e;
-      --text: #e2e0ef;
-      --muted: #6e6c85;
-      --accent: #2f81f7;
-      --green: #3fb950;
-      --purple: #bc8cff;
-      --pink: #f472b6;
+      --bg: #f7f4ef;
+      --ink: #1a1510;
+      --accent: #c84b11;
+      --accent2: #1a5c38;
+      --muted: #7a7060;
+      --surface: #edeade;
+      --border: #d9d0c0;
+      --dark: #1a1510;
+      --code: #2d5a8e;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); overflow-x: hidden; }
+
+    /* Grain overlay */
+    body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 1000; opacity: 0.4; }
+
+    /* Nav */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; background: rgba(247,244,239,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta { background: var(--ink); color: var(--bg) !important; padding: 9px 20px; border-radius: 4px; font-weight: 600 !important; transition: background 0.2s !important; }
+    .nav-cta:hover { background: var(--accent) !important; color: #fff !important; }
 
     /* Hero */
-    .hero { max-width: 860px; margin: 0 auto; padding: 80px 32px 56px; text-align: center; }
-    .available-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); color: var(--green); font-size: 13px; font-weight: 600; padding: 6px 16px; border-radius: 20px; margin-bottom: 28px; }
-    .available-badge .dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .hero h1 { font-size: 48px; font-weight: 800; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 18px; }
-    .hero h1 span { background: linear-gradient(90deg, var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero p { font-size: 17px; color: var(--muted); line-height: 1.7; max-width: 520px; margin: 0 auto 32px; }
-    .hero-tags { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 40px; }
-    .tag { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); }
-    .tag.blue   { border-color: rgba(47,129,247,0.4);  color: var(--accent); background: rgba(47,129,247,0.08); }
-    .tag.purple { border-color: rgba(188,140,255,0.4); color: var(--purple); background: rgba(188,140,255,0.08); }
-    .tag.pink   { border-color: rgba(244,114,182,0.4); color: var(--pink);   background: rgba(244,114,182,0.08); }
-    .tag.green  { border-color: rgba(63,185,80,0.4);   color: var(--green);  background: rgba(63,185,80,0.08); }
+    .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; padding: 120px 48px 80px; gap: 48px; align-items: center; max-width: 1200px; margin: 0 auto; }
+    .hero-left { }
+    .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); padding: 6px 14px; border-radius: 2px; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+    .hero-tag .dot { width: 7px; height: 7px; background: var(--accent2); border-radius: 50%; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: 68px; font-weight: 900; line-height: 1.0; letter-spacing: -2px; margin-bottom: 24px; }
+    .hero h1 .line2 { color: var(--accent); font-style: italic; }
+    .hero-desc { font-size: 17px; color: var(--muted); line-height: 1.8; max-width: 480px; margin-bottom: 36px; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: var(--bg); padding: 14px 28px; border-radius: 4px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+    .btn-primary:hover { background: var(--accent); transform: translateY(-2px); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--ink); padding: 14px 28px; border-radius: 4px; font-size: 15px; font-weight: 600; text-decoration: none; border: 2px solid var(--ink); transition: all 0.2s; }
+    .btn-secondary:hover { background: var(--ink); color: var(--bg); }
+    .hero-right { display: flex; flex-direction: column; gap: 14px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; display: flex; align-items: center; gap: 16px; transition: transform 0.2s; }
+    .stat-card:hover { transform: translateX(6px); }
+    .stat-icon { font-size: 28px; }
+    .stat-label { font-size: 13px; color: var(--muted); margin-bottom: 2px; }
+    .stat-value { font-size: 16px; font-weight: 700; }
+    .hero-scroll { display: flex; align-items: center; gap: 10px; margin-top: 48px; font-size: 13px; color: var(--muted); font-family: 'DM Mono', monospace; }
+    .scroll-line { width: 40px; height: 1px; background: var(--muted); }
 
-    /* Section */
-    .section { max-width: 860px; margin: 0 auto; padding: 0 32px 80px; }
-    .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
-    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    /* Services */
+    .services { background: var(--ink); color: var(--bg); padding: 100px 48px; }
+    .services-inner { max-width: 1200px; margin: 0 auto; }
+    .section-tag { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 48px; font-weight: 900; letter-spacing: -1px; margin-bottom: 56px; line-height: 1.1; }
+    .section-title em { font-style: italic; color: var(--accent); }
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .service-item { padding: 36px; border: 1px solid rgba(255,255,255,0.08); transition: background 0.2s; }
+    .service-item:hover { background: rgba(255,255,255,0.04); }
+    .service-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); margin-bottom: 20px; }
+    .service-icon { font-size: 32px; margin-bottom: 16px; }
+    .service-item h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .service-item p { font-size: 14px; color: rgba(247,244,239,0.6); line-height: 1.7; margin-bottom: 16px; }
+    .service-price { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--accent); }
 
-    /* Portfolio grid */
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; text-decoration: none; color: var(--text); transition: all 0.2s; display: flex; flex-direction: column; gap: 12px; }
-    .card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(47,129,247,0.1); }
-    .card-icon { font-size: 28px; }
-    .card-type { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
-    .card h3 { font-size: 17px; font-weight: 700; line-height: 1.3; }
-    .card p { font-size: 13px; color: var(--muted); line-height: 1.6; flex: 1; }
-    .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); }
-    .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-    .ctag { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); color: var(--muted); font-family: 'JetBrains Mono', monospace; }
-    .card-arrow { color: var(--accent); font-size: 16px; }
+    /* Portfolio */
+    .portfolio { padding: 100px 48px; max-width: 1200px; margin: 0 auto; }
+    .portfolio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
+    .portfolio-card { border: 2px solid var(--border); border-radius: 8px; overflow: hidden; transition: all 0.2s; text-decoration: none; color: var(--ink); display: block; }
+    .portfolio-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(200,75,17,0.12); }
+    .portfolio-card-header { padding: 28px; background: var(--surface); border-bottom: 2px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
+    .portfolio-card-icon { font-size: 32px; }
+    .portfolio-card-type { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; background: var(--bg); padding: 4px 10px; border-radius: 2px; border: 1px solid var(--border); }
+    .portfolio-card-body { padding: 24px 28px; }
+    .portfolio-card-body h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .portfolio-card-body p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+    .portfolio-card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid var(--border); }
+    .portfolio-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .ptag { font-family: 'DM Mono', monospace; font-size: 11px; background: var(--surface); padding: 3px 8px; border-radius: 2px; color: var(--muted); }
+    .view-link { font-size: 13px; font-weight: 700; color: var(--accent); }
 
-    /* Contact */
-    .contact { max-width: 860px; margin: 0 auto; padding: 0 32px 80px; }
-    .contact-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 36px; text-align: center; }
-    .contact-box h2 { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
-    .contact-box p { color: var(--muted); font-size: 15px; margin-bottom: 24px; }
-    .contact-links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .clink { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.15s; }
-    .clink.primary { background: var(--accent); color: #fff; }
-    .clink.primary:hover { background: #388bfd; }
-    .clink.secondary { border: 1px solid var(--border); color: var(--muted); }
-    .clink.secondary:hover { border-color: var(--accent); color: var(--accent); }
+    /* Process */
+    .process { background: var(--surface); padding: 100px 48px; }
+    .process-inner { max-width: 1200px; margin: 0 auto; }
+    .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 56px; }
+    .process-step { padding: 32px; background: var(--bg); border: 1px solid var(--border); position: relative; }
+    .process-step::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--muted); z-index: 1; }
+    .process-step:last-child::after { display: none; }
+    .step-num { font-family: 'DM Mono', monospace; font-size: 32px; font-weight: 600; color: var(--border); margin-bottom: 16px; line-height: 1; }
+    .process-step h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .process-step p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* Testimonial / CTA */
+    .cta { padding: 100px 48px; max-width: 1200px; margin: 0 auto; }
+    .cta-box { background: var(--ink); color: var(--bg); border-radius: 12px; padding: 72px; display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: center; }
+    .cta-box h2 { font-family: 'Playfair Display', serif; font-size: 44px; font-weight: 900; line-height: 1.1; letter-spacing: -1px; margin-bottom: 16px; }
+    .cta-box h2 em { color: var(--accent); font-style: italic; }
+    .cta-box p { font-size: 16px; color: rgba(247,244,239,0.65); line-height: 1.7; max-width: 480px; }
+    .cta-right { display: flex; flex-direction: column; gap: 14px; min-width: 260px; }
+    .cta-link { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+    .cta-link.primary { background: var(--accent); color: #fff; }
+    .cta-link.primary:hover { background: #e05520; transform: translateX(4px); }
+    .cta-link.secondary { background: rgba(255,255,255,0.08); color: var(--bg); border: 1px solid rgba(255,255,255,0.15); }
+    .cta-link.secondary:hover { background: rgba(255,255,255,0.15); }
+    .cta-link .link-icon { font-size: 18px; }
+
+    /* Contact strip */
+    .contact-strip { background: var(--accent); padding: 24px 48px; display: flex; justify-content: center; align-items: center; gap: 48px; flex-wrap: wrap; }
+    .contact-item { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 14px; font-weight: 500; text-decoration: none; }
+    .contact-item:hover { text-decoration: underline; }
 
     /* Footer */
-    footer { border-top: 1px solid var(--border); padding: 24px 32px; text-align: center; font-size: 13px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+    footer { background: var(--ink); color: rgba(247,244,239,0.4); padding: 32px 48px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-family: 'DM Mono', monospace; }
+    footer a { color: rgba(247,244,239,0.6); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
 
-    @media (max-width: 600px) {
-      .grid { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 32px; }
-      .hero { padding: 48px 20px 40px; }
-      .section, .contact { padding-left: 20px; padding-right: 20px; }
+    /* Animations */
+    .fade-in { opacity: 0; transform: translateY(24px); animation: fadeUp 0.7s forwards; }
+    .fade-in:nth-child(2) { animation-delay: 0.1s; }
+    .fade-in:nth-child(3) { animation-delay: 0.2s; }
+    .fade-in:nth-child(4) { animation-delay: 0.3s; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
+      .hero h1 { font-size: 44px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr 1fr; }
+      .cta-box { grid-template-columns: 1fr; padding: 40px; }
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .services, .portfolio, .process, .cta { padding: 60px 24px; }
+      .contact-strip { padding: 20px 24px; gap: 20px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Hero -->
-  <div class="hero">
-    <div class="available-badge"><span class="dot"></span> Available for Projects</div>
-    <h1>Technical Writing<br/><span>That Developers Love</span></h1>
-    <p>I write clean, professional documentation for APIs, SDKs, and SaaS products. Clear docs. Fast delivery. Developer-friendly writing.</p>
-    <div class="hero-tags">
-      <span class="tag blue">API Documentation</span>
-      <span class="tag purple">SDK Guides</span>
-      <span class="tag pink">README Writing</span>
-      <span class="tag green">User Guides</span>
-      <span class="tag">SOP Writing</span>
-      <span class="tag">Developer Docs</span>
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">Bishop<span>.</span></div>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#process">Process</a>
+    <a href="#contact" class="nav-cta">Hire Me</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag fade-in"><span class="dot"></span> Available for Projects</div>
+    <h1 class="fade-in">
+      Docs That<br/>
+      <span class="line2">Developers</span><br/>
+      Actually Read.
+    </h1>
+    <p class="hero-desc fade-in">I'm Bishop — a technical writer helping SaaS founders and developers turn confusing, incomplete documentation into clean, professional references that drive adoption.</p>
+    <div class="hero-btns fade-in">
+      <a href="https://contra.com/kelechi_asonye_ou2vw2l1" target="_blank" class="btn-primary">💼 Hire Me on Contra</a>
+      <a href="https://bishopasonye.github.io/Portfolio/" target="_blank" class="btn-secondary">📁 View Portfolio</a>
+    </div>
+    <div class="hero-scroll fade-in">
+      <span class="scroll-line"></span>
+      <span>Scroll to explore</span>
     </div>
   </div>
-
-  <!-- Portfolio -->
-  <div class="section">
-    <div class="section-label">Portfolio Samples</div>
-    <div class="grid">
-
-      <a class="card" href="sample-api-documentation.html">
-        <div class="card-icon">📡</div>
-        <div class="card-type">REST API Documentation</div>
-        <h3>TaskFlow API Docs</h3>
-        <p>Full API reference with authentication guide, endpoint docs, request/response examples, pagination, and error codes.</p>
-        <div class="card-footer">
-          <div class="card-tags">
-            <span class="ctag">REST</span>
-            <span class="ctag">JSON</span>
-            <span class="ctag">cURL</span>
-          </div>
-          <span class="card-arrow">→</span>
-        </div>
-      </a>
-
-      <a class="card" href="authvault-sdk-docs.html">
-        <div class="card-icon">🔐</div>
-        <div class="card-type">SDK Documentation</div>
-        <h3>AuthVault SDK Docs</h3>
-        <p>Node.js SDK reference covering installation, configuration, all methods, parameters, error handling, and full code examples.</p>
-        <div class="card-footer">
-          <div class="card-tags">
-            <span class="ctag">Node.js</span>
-            <span class="ctag">JWT</span>
-            <span class="ctag">SDK</span>
-          </div>
-          <span class="card-arrow">→</span>
-        </div>
-      </a>
-
-      <a class="card" href="notiflow-readme.html">
-        <div class="card-icon">🔔</div>
-        <div class="card-type">GitHub README</div>
-        <h3>NotiFlow README</h3>
-        <p>Professional open-source README with feature overview, multi-channel support table, quickstart, API reference, and contributing guide.</p>
-        <div class="card-footer">
-          <div class="card-tags">
-            <span class="ctag">README</span>
-            <span class="ctag">npm</span>
-            <span class="ctag">TypeScript</span>
-          </div>
-          <span class="card-arrow">→</span>
-        </div>
-      </a>
-
-      <a class="card" href="datapulse-user-guide.html">
-        <div class="card-icon">📊</div>
-        <div class="card-type">Product User Guide</div>
-        <h3>DataPulse User Guide</h3>
-        <p>Step-by-step onboarding guide for a SaaS analytics dashboard — setup, data connections, dashboards, alerts, and FAQ.</p>
-        <div class="card-footer">
-          <div class="card-tags">
-            <span class="ctag">SaaS</span>
-            <span class="ctag">User Guide</span>
-            <span class="ctag">Onboarding</span>
-          </div>
-          <span class="card-arrow">→</span>
-        </div>
-      </a>
-
+  <div class="hero-right">
+    <div class="stat-card fade-in">
+      <span class="stat-icon">📡</span>
+      <div>
+        <div class="stat-label">Specialization</div>
+        <div class="stat-value">API & Developer Documentation</div>
+      </div>
     </div>
-  </div>
-
-  <!-- Contact -->
-  <div class="contact">
-    <div class="section-label">Work With Me</div>
-    <div class="contact-box">
-      <h2>Need Better Documentation?</h2>
-      <p>I help startups and developers write docs that actually get read.<br/>Fast turnaround. Flat-rate pricing. No fluff.</p>
-      <div class="contact-links">
-        <a class="clink primary" href="https://contra.com" target="_blank">💼 Hire Me on Contra</a>
-        <a class="clink secondary" href="https://linkedin.com" target="_blank">🔗 LinkedIn</a>
+    <div class="stat-card fade-in">
+      <span class="stat-icon">⚡</span>
+      <div>
+        <div class="stat-label">Turnaround</div>
+        <div class="stat-value">2–3 Days Per Project</div>
+      </div>
+    </div>
+    <div class="stat-card fade-in">
+      <span class="stat-icon">🎯</span>
+      <div>
+        <div class="stat-label">First Project</div>
+        <div class="stat-value">Free Sample Before You Pay</div>
+      </div>
+    </div>
+    <div class="stat-card fade-in">
+      <span class="stat-icon">💰</span>
+      <div>
+        <div class="stat-label">Starting Rate</div>
+        <div class="stat-value">$75 Per Project</div>
+      </div>
+    </div>
+    <div class="stat-card fade-in">
+      <span class="stat-icon">🌍</span>
+      <div>
+        <div class="stat-label">Based In</div>
+        <div class="stat-value">Lagos, Nigeria — Remote Worldwide</div>
       </div>
     </div>
   </div>
+</section>
 
-  <footer>Technical Writing Portfolio · Built with care</footer>
+<!-- Services -->
+<section class="services" id="services">
+  <div class="services-inner">
+    <div class="section-tag">What I Do</div>
+    <h2 class="section-title">Documentation that<br/><em>works for you</em></h2>
+    <div class="services-grid">
+      <div class="service-item">
+        <div class="service-num">01</div>
+        <div class="service-icon">📡</div>
+        <h3>API Documentation</h3>
+        <p>Full REST API references with authentication guides, endpoint docs, request/response examples, error codes, and cURL snippets. Your developers will thank you.</p>
+        <div class="service-price">From $100/project</div>
+      </div>
+      <div class="service-item">
+        <div class="service-num">02</div>
+        <div class="service-icon">🔐</div>
+        <h3>SDK & Library Guides</h3>
+        <p>Complete SDK documentation covering installation, configuration, all methods and parameters, code examples, and error handling for Node.js, Python and more.</p>
+        <div class="service-price">From $100/project</div>
+      </div>
+      <div class="service-item">
+        <div class="service-num">03</div>
+        <div class="service-icon">📄</div>
+        <h3>GitHub READMEs</h3>
+        <p>Professional open-source READMEs that make your repo stand out — feature overviews, installation guides, usage examples, badges, and contributing guidelines.</p>
+        <div class="service-price">From $75/project</div>
+      </div>
+      <div class="service-item">
+        <div class="service-num">04</div>
+        <div class="service-icon">📊</div>
+        <h3>Product User Guides</h3>
+        <p>Step-by-step onboarding and user guides for SaaS products. Covers setup, core features, configuration, troubleshooting, and FAQ sections.</p>
+        <div class="service-price">From $150/project</div>
+      </div>
+      <div class="service-item">
+        <div class="service-num">05</div>
+        <div class="service-icon">📋</div>
+        <h3>SOPs & Process Docs</h3>
+        <p>Clear, structured standard operating procedures and technical process documentation for engineering teams, devops workflows, and internal systems.</p>
+        <div class="service-price">From $75/project</div>
+      </div>
+      <div class="service-item">
+        <div class="service-num">06</div>
+        <div class="service-icon">🔄</div>
+        <h3>Ongoing Retainer</h3>
+        <p>Monthly documentation support — keep your docs up to date as your product evolves. Ideal for startups shipping fast and needing continuous doc coverage.</p>
+        <div class="service-price">From $300/month</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Portfolio -->
+<section class="portfolio" id="portfolio">
+  <div class="section-tag">Recent Work</div>
+  <h2 class="section-title" style="font-family:'Playfair Display',serif;font-size:48px;font-weight:900;letter-spacing:-1px;line-height:1.1;">Portfolio <em style="color:var(--accent);font-style:italic;">Samples</em></h2>
+  <div class="portfolio-grid">
+    <a class="portfolio-card" href="https://bishopasonye.github.io/Portfolio/sample-api-documentation.html" target="_blank">
+      <div class="portfolio-card-header">
+        <span class="portfolio-card-icon">📡</span>
+        <span class="portfolio-card-type">REST API Docs</span>
+      </div>
+      <div class="portfolio-card-body">
+        <h3>TaskFlow API Documentation</h3>
+        <p>Complete REST API reference with authentication, all endpoints, parameters, request/response examples, pagination, and error codes.</p>
+        <div class="portfolio-card-footer">
+          <div class="portfolio-tags"><span class="ptag">REST</span><span class="ptag">JSON</span><span class="ptag">cURL</span></div>
+          <span class="view-link">View →</span>
+        </div>
+      </div>
+    </a>
+    <a class="portfolio-card" href="https://bishopasonye.github.io/Portfolio/authvault-sdk-docs.html" target="_blank">
+      <div class="portfolio-card-header">
+        <span class="portfolio-card-icon">🔐</span>
+        <span class="portfolio-card-type">SDK Documentation</span>
+      </div>
+      <div class="portfolio-card-body">
+        <h3>AuthVault SDK Docs</h3>
+        <p>Node.js SDK reference with quickstart, configuration, all methods, parameters, error handling, and full Express.js integration example.</p>
+        <div class="portfolio-card-footer">
+          <div class="portfolio-tags"><span class="ptag">Node.js</span><span class="ptag">JWT</span><span class="ptag">SDK</span></div>
+          <span class="view-link">View →</span>
+        </div>
+      </div>
+    </a>
+    <a class="portfolio-card" href="https://bishopasonye.github.io/Portfolio/notiflow-readme.html" target="_blank">
+      <div class="portfolio-card-header">
+        <span class="portfolio-card-icon">🔔</span>
+        <span class="portfolio-card-type">GitHub README</span>
+      </div>
+      <div class="portfolio-card-body">
+        <h3>NotiFlow README</h3>
+        <p>Professional open-source README with feature overview, multi-channel support table, quickstart guide, API reference, and contributing guide.</p>
+        <div class="portfolio-card-footer">
+          <div class="portfolio-tags"><span class="ptag">README</span><span class="ptag">npm</span><span class="ptag">TypeScript</span></div>
+          <span class="view-link">View →</span>
+        </div>
+      </div>
+    </a>
+    <a class="portfolio-card" href="https://bishopasonye.github.io/Portfolio/datapulse-user-guide.html" target="_blank">
+      <div class="portfolio-card-header">
+        <span class="portfolio-card-icon">📊</span>
+        <span class="portfolio-card-type">User Guide</span>
+      </div>
+      <div class="portfolio-card-body">
+        <h3>DataPulse User Guide</h3>
+        <p>Complete SaaS onboarding guide covering initial setup, data connections, dashboard creation, alerts configuration, and FAQ.</p>
+        <div class="portfolio-card-footer">
+          <div class="portfolio-tags"><span class="ptag">SaaS</span><span class="ptag">Onboarding</span><span class="ptag">User Guide</span></div>
+          <span class="view-link">View →</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- Process -->
+<section class="process" id="process">
+  <div class="process-inner">
+    <div class="section-tag">How It Works</div>
+    <h2 class="section-title" style="font-family:'Playfair Display',serif;font-size:48px;font-weight:900;letter-spacing:-1px;line-height:1.1;">Simple. Fast. <em style="color:var(--accent);font-style:italic;">Professional.</em></h2>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <h4>Tell Me About Your Project</h4>
+        <p>Send me a message with details about your product, what docs you need, and your timeline.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-num">02</div>
+        <h4>Free Sample First</h4>
+        <p>I write a free sample section of your documentation so you can see the quality before paying anything.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-num">03</div>
+        <h4>I Write Your Docs</h4>
+        <p>Once you're happy with the sample, I complete the full documentation within 2–3 days.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-num">04</div>
+        <h4>Delivered & Done</h4>
+        <p>You receive clean, formatted docs ready to publish. One round of revisions included free.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contact">
+  <div class="cta-box">
+    <div>
+      <h2>Ready to fix your<br/><em>documentation?</em></h2>
+      <p>Let's work together. Send me a message on Contra or email me directly — I'll respond within 24 hours and we can get started with a free sample right away.</p>
+    </div>
+    <div class="cta-right">
+      <a class="cta-link primary" href="https://contra.com/kelechi_asonye_ou2vw2l1" target="_blank">
+        <span class="link-icon">💼</span> Hire Me on Contra
+      </a>
+      <a class="cta-link secondary" href="https://bishopasonye.github.io/Portfolio/" target="_blank">
+        <span class="link-icon">📁</span> View Full Portfolio
+      </a>
+      <a class="cta-link secondary" href="mailto:bishopasonye@gmail.com">
+        <span class="link-icon">📩</span> Email Me Directly
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Strip -->
+<div class="contact-strip">
+  <a class="contact-item" href="mailto:bishopasonye@gmail.com">📩 bishopasonye@gmail.com</a>
+  <a class="contact-item" href="https://contra.com/kelechi_asonye_ou2vw2l1" target="_blank">💼 Contra Profile</a>
+  <a class="contact-item" href="https://bishopasonye.github.io/Portfolio/" target="_blank">📁 Portfolio</a>
+  <span class="contact-item">🌍 Lagos, Nigeria — Remote Worldwide</span>
+</div>
+
+<!-- Footer -->
+<footer>
+  <span>© 2025 Bishop Kelechi Asonye — Technical Writer</span>
+  <div style="display:flex;gap:24px;">
+    <a href="https://contra.com/kelechi_asonye_ou2vw2l1" target="_blank">Contra</a>
+    <a href="https://bishopasonye.github.io/Portfolio/" target="_blank">Portfolio</a>
+    <a href="mailto:bishopasonye@gmail.com">Email</a>
+  </div>
+</footer>
 
 </body>
 </html>
